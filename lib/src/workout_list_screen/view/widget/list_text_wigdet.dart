@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// This widget displays a row with a label and a value, typically used for displaying workout details.
 class ListTextWigdet extends StatelessWidget {
   const ListTextWigdet({super.key, required this.text, required this.value});
   final String text;

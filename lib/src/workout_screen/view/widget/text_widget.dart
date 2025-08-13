@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// This widget displays a text label, typically used for headings or titles in the workout screen.
 class TextWidget extends StatelessWidget {
   const TextWidget({super.key, required this.text});
   final String text;

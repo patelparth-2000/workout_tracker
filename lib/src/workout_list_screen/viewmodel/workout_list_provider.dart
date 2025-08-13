@@ -7,6 +7,7 @@ import '../../workout_screen/model/workout_model.dart';
 
 part 'workout_list_provider.g.dart';
 
+/// This provider manages the list of workouts, allowing for adding, updating, deleting, and clearing workouts.
 @riverpod
 class WorkoutList extends _$WorkoutList {
   final _key = 'workoutList';
@@ -26,11 +27,13 @@ class WorkoutList extends _$WorkoutList {
     return [];
   }
 
+  // Adds a new workout to the list and saves it to storage.
   void addWorkout(WorkoutModel workout) {
     state = [...state, workout];
     _saveToStorage();
   }
 
+  // Updates an existing workout in the list and saves it to storage.
   void updateWorkout(WorkoutModel oldWorkout, WorkoutModel newWorkout) {
     final index = state.indexOf(oldWorkout);
     if (index != -1) {
@@ -43,16 +46,19 @@ class WorkoutList extends _$WorkoutList {
     }
   }
 
+  // Deletes a workout from the list by its index and saves the updated list to storage.
   void deleteWorkout(int index) {
     state = [...state]..removeAt(index);
     _saveToStorage();
   }
 
+  // Clears all workouts from the list and saves the empty list to storage.
   void clearWorkouts() {
     state = [];
     _saveToStorage();
   }
 
+  // Saves the current state of workouts to persistent storage.
   void _saveToStorage() {
     final encoded = jsonEncode(state.map((e) => e.toJson()).toList());
     storage.write(_key, encoded);

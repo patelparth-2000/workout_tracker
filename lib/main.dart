@@ -6,6 +6,7 @@ import 'package:workout_tracker/routes/app_routes.dart';
 import 'common/widget/show_toast.dart';
 
 void main() async {
+  // Initialize GetStorage for persistent storage
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   runApp(const ProviderScope(child: MyApp()));

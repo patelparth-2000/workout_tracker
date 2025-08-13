@@ -9,6 +9,7 @@ import '../../../../utils/images.dart';
 import 'button_widget.dart';
 import 'list_text_wigdet.dart';
 
+/// This widget displays a list of workouts with options to edit, view details, or delete each workout.
 class ListWidget extends StatelessWidget {
   const ListWidget({
     super.key,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// This widget is a customizable button that can display either text or an icon.
 class ButtonWidget extends StatelessWidget {
   const ButtonWidget({
     super.key,

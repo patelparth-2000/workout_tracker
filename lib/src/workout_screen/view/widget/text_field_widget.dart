@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workout_tracker/utils/color_constant.dart';
 
+/// This widget is a customizable text field for entering workout details.
 class TextFieldWidget extends StatelessWidget {
   const TextFieldWidget({
     super.key,

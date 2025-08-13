@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// This file contains color constants used throughout the application for consistent theming and styling.
 class TextColor {
   static const Color white = Color(0xffFFFFFF);
   static const Color black = Color(0xff000000);

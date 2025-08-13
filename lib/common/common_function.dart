@@ -1,6 +1,7 @@
 import 'package:get_storage/get_storage.dart';
 import 'package:workout_tracker/utils/images.dart';
 
+// This file contains common functions and global variables used across the application.
 List<Map<String, String>> workoutTypes = [
   {
     "name": 'Barbell row',

@@ -12,6 +12,7 @@ import 'widget/list_widget.dart';
 import 'widget/text_field_widget.dart';
 import 'widget/text_widget.dart';
 
+// This screen allows users to add or edit workout details, including selecting a workout type, entering weight, repetitions, and sets.
 class WorkoutScreen extends ConsumerWidget {
   const WorkoutScreen({super.key, this.workout});
   final WorkoutModel? workout;
@@ -22,6 +23,7 @@ class WorkoutScreen extends ConsumerWidget {
     final workoutListNotifier = ref.read(workoutListProvider.notifier);
     final workoutNotifier = ref.read(workoutProviderProvider.notifier);
 
+    // List of workout types with their details
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (workout != null && selectedIndex == null) {
         final typeIndex = workoutTypes.indexWhere(
@@ -116,7 +118,7 @@ class WorkoutScreen extends ConsumerWidget {
                   showToast(message: 'Please fill in all fields');
                   return;
                 }
-
+                // Create a new workout model with the provided details
                 final newWorkout = WorkoutModel(
                   description: workoutTypes[selectedIndex]['description'] ?? '',
                   icon: workoutTypes[selectedIndex]['icon'] ?? '',
@@ -134,6 +136,7 @@ class WorkoutScreen extends ConsumerWidget {
                   showToast(message: 'Workout added successfully');
                 }
 
+                // Reset the form after saving
                 workoutNotifier.selectWorkout(-1);
                 workoutNotifier.weightController.clear();
                 workoutNotifier.repsController.clear();

@@ -1,3 +1,4 @@
+// workout_model.dart
 class WorkoutModel {
   final String type;
   final String weight;

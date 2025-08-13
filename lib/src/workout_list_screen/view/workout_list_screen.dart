@@ -10,6 +10,8 @@ import '../../../utils/images.dart';
 import '../viewmodel/workout_list_provider.dart';
 import 'widget/list_widget.dart';
 
+
+// This screen displays a list of workouts with options to add, edit, view details, or delete workouts.
 class WorkoutListScreen extends ConsumerWidget {
   const WorkoutListScreen({super.key});
 

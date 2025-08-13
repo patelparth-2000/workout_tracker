@@ -4,6 +4,7 @@ import 'package:workout_tracker/utils/color_constant.dart';
 import '../../../../common/widget/view_exercise_bottom_sheet.dart';
 import '../../../../utils/images.dart';
 
+/// This widget displays a list of workout types with options to view details.
 class ListWidget extends StatelessWidget {
   const ListWidget({
     super.key,
