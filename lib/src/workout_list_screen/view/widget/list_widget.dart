@@ -16,7 +16,7 @@ class ListWidget extends StatelessWidget {
     required this.onDeleteButtonPressed,
   });
   final List<WorkoutModel> workouts;
-  final Function() onDeleteButtonPressed;
+  final Function(int) onDeleteButtonPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,9 @@ class ListWidget extends StatelessWidget {
               ButtonWidget(
                 icon: Images().deleteIcon,
                 color: IconColor.red,
-                onPressed: onDeleteButtonPressed,
+                onPressed: () {
+                  onDeleteButtonPressed(index);
+                },
               ),
             ],
           ),

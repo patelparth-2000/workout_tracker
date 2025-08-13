@@ -134,6 +134,11 @@ class WorkoutScreen extends ConsumerWidget {
                   showToast(message: 'Workout added successfully');
                 }
 
+                workoutNotifier.selectWorkout(-1);
+                workoutNotifier.weightController.clear();
+                workoutNotifier.repsController.clear();
+                workoutNotifier.setsController.clear();
+
                 context.pop();
               },
               child: Text(workout != null ? 'Update Workout' : 'Save Workout'),

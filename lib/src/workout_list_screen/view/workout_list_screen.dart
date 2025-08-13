@@ -50,8 +50,8 @@ class WorkoutListScreen extends ConsumerWidget {
             )
           : ListWidget(
               workouts: workouts,
-              onDeleteButtonPressed: () {
-                ref.read(workoutListProvider.notifier).deleteWorkout(0);
+              onDeleteButtonPressed: (index) {
+                ref.read(workoutListProvider.notifier).deleteWorkout(index);
                 showToast(message: 'Workout deleted');
               },
             ),

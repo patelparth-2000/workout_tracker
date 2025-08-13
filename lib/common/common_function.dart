@@ -35,4 +35,4 @@ List<Map<String, String>> workoutTypes = [
 ];
 
 // global storage instance
-final storage = GetStorage();
+GetStorage storage = GetStorage();
