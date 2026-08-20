@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# graphify knowledge graph — generated output, rebuildable with `python -m graphify`
+graphify-out/
+
+# AI agent tooling — local only, never pushed.
+# Agents, skills, commands and settings used to work on this repo. They are
+# workspace tooling, not part of the product, and they are rebuildable.
+.claude/
