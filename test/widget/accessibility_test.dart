@@ -78,6 +78,13 @@ final _screens = <(String, Future<void> Function(WidgetTester))>[
     },
   ),
   (
+    'Plate calculator',
+    (t) async {
+      await openTab(t, 'Settings');
+      await scrollAndTap(t, find.text('Plate calculator'));
+    },
+  ),
+  (
     'Routine editor',
     (t) async {
       await scrollAndTap(
