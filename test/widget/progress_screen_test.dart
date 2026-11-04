@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:workout_tracker/data/app_database.dart';
@@ -100,4 +101,47 @@ void main() {
     // Best e1RM 128.33 kg = 282.9 lb.
     expect(find.bySemanticsLabel(RegExp(r'highest 282\.9 lb')), findsOneWidget);
   }, setup: _history);
+
+  testAppWidgets(
+    'one workout shows a hint instead of a one-point chart',
+    (app) async {
+      await openTab(app.tester, 'Progress');
+      expect(find.byType(LineChart), findsNothing);
+      expect(
+        find.textContaining('Log this exercise in more workouts'),
+        findsOneWidget,
+      );
+    },
+    setup: (db) => logFinishedSession(
+      db,
+      exercise: 'Squat',
+      at: DateTime.now(),
+      sets: [(100, 5)],
+    ),
+  );
+
+  testAppWidgets(
+    'two workouts on the same day are two separate chart points',
+    (app) async {
+      await openTab(app.tester, 'Progress');
+      final chart = app.tester.widget<LineChart>(find.byType(LineChart));
+      final xs = chart.data.lineBarsData.single.spots.map((s) => s.x).toList();
+      expect(xs, [0, 1]);
+    },
+    setup: (db) async {
+      final now = DateTime.now();
+      await logFinishedSession(
+        db,
+        exercise: 'Squat',
+        at: now.subtract(const Duration(hours: 3)),
+        sets: [(100, 5)],
+      );
+      await logFinishedSession(
+        db,
+        exercise: 'Squat',
+        at: now.subtract(const Duration(hours: 1)),
+        sets: [(105, 5)],
+      );
+    },
+  );
 }

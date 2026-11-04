@@ -25,12 +25,15 @@ class ProgressChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = AppColors.of(context);
-    if (points.isEmpty) return const SizedBox.shrink();
-    final first = points.first.$1;
-    double x(DateTime d) => d.difference(first).inHours / 24;
+    if (points.length < 2) return const SizedBox.shrink();
+    // One step per workout (not per day): two sessions on the same day must not collapse
+    // into a vertical line. Dates label the first, middle and last workouts.
     final spots = [
-      for (final p in points) FlSpot(x(p.$1), kgToUnit(p.$2, unit)),
+      for (final (i, p) in points.indexed)
+        FlSpot(i.toDouble(), kgToUnit(p.$2, unit)),
     ];
+    final last = points.length - 1;
+    final labelled = {0, last ~/ 2, last};
     final values = spots.map((s) => s.y);
     final minY = values.reduce((a, b) => a < b ? a : b);
     final maxY = values.reduce((a, b) => a > b ? a : b);
@@ -60,7 +63,7 @@ class ProgressChart extends StatelessWidget {
               minY: (minY - pad).clamp(0, double.infinity),
               maxY: maxY + pad,
               minX: 0,
-              maxX: spots.last.x <= 0 ? 1 : spots.last.x,
+              maxX: last.toDouble(),
               gridData: FlGridData(
                 drawVerticalLine: false,
                 getDrawingHorizontalLine: (_) => FlLine(
@@ -76,6 +79,8 @@ class ProgressChart extends StatelessWidget {
                   sideTitles: SideTitles(
                     showTitles: true,
                     reservedSize: AppSizes.chartLeftAxis,
+                    minIncluded: false,
+                    maxIncluded: false,
                     getTitlesWidget: (v, meta) => SideTitleWidget(
                       meta: meta,
                       child: Text(
@@ -89,18 +94,20 @@ class ProgressChart extends StatelessWidget {
                   sideTitles: SideTitles(
                     showTitles: true,
                     reservedSize: AppSizes.chartBottomAxis,
-                    interval: spots.last.x <= 0
-                        ? 1
-                        : (spots.last.x / 3).ceilToDouble(),
-                    getTitlesWidget: (v, meta) => SideTitleWidget(
-                      meta: meta,
-                      child: Text(
-                        dateFmt.format(
-                          first.add(Duration(hours: (v * 24).round())),
+                    interval: 1,
+                    getTitlesWidget: (v, meta) {
+                      final i = v.round();
+                      if (v != i || !labelled.contains(i)) {
+                        return const SizedBox.shrink();
+                      }
+                      return SideTitleWidget(
+                        meta: meta,
+                        child: Text(
+                          dateFmt.format(points[i].$1),
+                          style: theme.textTheme.labelSmall,
                         ),
-                        style: theme.textTheme.labelSmall,
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ),
               ),
