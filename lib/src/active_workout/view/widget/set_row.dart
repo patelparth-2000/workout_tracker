@@ -58,6 +58,16 @@ class _SetRowState extends State<SetRow> {
     super.initState();
     _weight = TextEditingController(text: _weightText(widget.set.weightKg));
     _reps = TextEditingController(text: '${widget.set.reps}');
+    // Select everything on focus so typing replaces a prefilled "0" or last value
+    // instead of appending to it.
+    _weightFocus.addListener(() => _selectAllOnFocus(_weightFocus, _weight));
+    _repsFocus.addListener(() => _selectAllOnFocus(_repsFocus, _reps));
+  }
+
+  void _selectAllOnFocus(FocusNode node, TextEditingController c) {
+    if (node.hasFocus) {
+      c.selection = TextSelection(baseOffset: 0, extentOffset: c.text.length);
+    }
   }
 
   String _weightText(double kg) =>
@@ -195,7 +205,8 @@ class _SetRowState extends State<SetRow> {
                   child: TextField(
                     controller: _weight,
                     focusNode: _weightFocus,
-                    enabled: !done,
+                    readOnly: done,
+                    canRequestFocus: !done,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -220,7 +231,8 @@ class _SetRowState extends State<SetRow> {
                   child: TextField(
                     controller: _reps,
                     focusNode: _repsFocus,
-                    enabled: !done,
+                    readOnly: done,
+                    canRequestFocus: !done,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,

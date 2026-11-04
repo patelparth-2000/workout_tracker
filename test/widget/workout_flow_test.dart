@@ -218,4 +218,34 @@ void main() {
     await settle(tester);
     expect(find.text('Discard changes?'), findsOneWidget);
   });
+
+  testAppWidgets(
+    'set inputs select their text on focus; done rows are read-only',
+    (app) async {
+      final tester = app.tester;
+      await tester.tap(find.text('Start empty workout'));
+      await settle(tester);
+      await tester.tap(find.text('Add exercise'));
+      await settle(tester);
+      await tester.tap(find.text('Squat'));
+      await settle(tester);
+
+      await tester.tap(_field('kg'));
+      await settle(tester);
+      final weight = tester.widget<TextField>(_field('kg'));
+      expect(
+        weight.controller!.selection,
+        const TextSelection(baseOffset: 0, extentOffset: 1),
+      );
+
+      await tester.tap(find.byTooltip('Mark set 1 done'));
+      await settle(tester);
+      final done = tester.widget<TextField>(_field('kg'));
+      expect(done.readOnly, isTrue);
+      expect(
+        done.enabled ?? true,
+        isTrue,
+      ); // readable, not greyed out as disabled
+    },
+  );
 }
