@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:workout_tracker/app.dart';
 import 'package:workout_tracker/data/app_database.dart';
@@ -27,6 +28,7 @@ void testAppWidgets(
   Size? surfaceSize,
   double textScale = 1,
   Future<void> Function(AppDatabase db)? setup,
+  List<Override> overrides = const [],
 }) {
   testWidgets(description, (tester) async {
     if (surfaceSize != null) {
@@ -43,6 +45,7 @@ void testAppWidgets(
           appDatabaseProvider.overrideWithValue(db),
           legacyReaderProvider.overrideWithValue(() async => legacyJson),
           if (clock != null) clockProvider.overrideWithValue(clock),
+          ...overrides,
         ],
         child: const App(),
       ),

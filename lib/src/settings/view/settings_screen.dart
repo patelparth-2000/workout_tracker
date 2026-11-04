@@ -8,6 +8,7 @@ import '../../../utils/app_spacing.dart';
 import '../../../utils/units.dart';
 import '../../../utils/workout_math.dart';
 import '../viewmodel/settings_provider.dart';
+import 'widget/backup_section.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -98,6 +99,7 @@ class _SettingsList extends ConsumerWidget {
             onSelectionChanged: (s) => controller.setThemeMode(s.single),
           ),
         ),
+        const BackupSection(),
         const SizedBox(height: AppSpacing.xl),
       ],
     );
