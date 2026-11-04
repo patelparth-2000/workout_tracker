@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class Images {
   // Logos
   static const String splashLogo = 'images/logos/splash_logo.jpeg';
-  static const String appIcon = 'images/icons/app_icon.png';
 
   // gif images
   static const String barbellRow = 'images/gifs/workout_barbell_row.gif';
