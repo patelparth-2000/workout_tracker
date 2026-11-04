@@ -1,0 +1,400 @@
+{
+ "version": 1,
+ "exercises": [
+  {
+   "name": "Bench press",
+   "muscle_group": "Chest",
+   "equipment": "Barbell",
+   "description": "The bench press is a compound exercise primarily targeting the chest, shoulders, and triceps. It involves lying on a bench and pressing a barbell or dumbbells upward. Proper form includes keeping the feet flat on the ground, maintaining a neutral spine, and controlling the weight throughout the movement.",
+   "gif_asset": "images/gifs/workout_bench_press.gif"
+  },
+  {
+   "name": "Incline bench press",
+   "muscle_group": "Chest",
+   "equipment": "Barbell",
+   "description": "Bench press on a 30-45 degree incline; shifts emphasis to the upper chest and front delts."
+  },
+  {
+   "name": "Decline bench press",
+   "muscle_group": "Chest",
+   "equipment": "Barbell",
+   "description": "Bench press on a decline bench; emphasises the lower chest."
+  },
+  {
+   "name": "Dumbbell bench press",
+   "muscle_group": "Chest",
+   "equipment": "Dumbbell",
+   "description": "Flat bench press with dumbbells; longer range of motion and independent arms."
+  },
+  {
+   "name": "Incline dumbbell press",
+   "muscle_group": "Chest",
+   "equipment": "Dumbbell",
+   "description": "Dumbbell press on an incline bench for the upper chest."
+  },
+  {
+   "name": "Dumbbell fly",
+   "muscle_group": "Chest",
+   "equipment": "Dumbbell",
+   "description": "Lying on a bench, open the arms wide with a slight elbow bend and squeeze them back together."
+  },
+  {
+   "name": "Cable crossover",
+   "muscle_group": "Chest",
+   "equipment": "Cable",
+   "description": "Standing between two high pulleys, bring the handles together in front of the chest."
+  },
+  {
+   "name": "Chest press machine",
+   "muscle_group": "Chest",
+   "equipment": "Machine",
+   "description": "Seated machine press; a stable way to train the chest close to failure."
+  },
+  {
+   "name": "Push-up",
+   "muscle_group": "Chest",
+   "equipment": "Bodyweight",
+   "description": "From a plank, lower the chest to the floor and press back up keeping the body straight."
+  },
+  {
+   "name": "Chest dip",
+   "muscle_group": "Chest",
+   "equipment": "Bodyweight",
+   "description": "Dip on parallel bars with a forward lean to bias the chest."
+  },
+  {
+   "name": "Deadlift",
+   "muscle_group": "Back",
+   "equipment": "Barbell",
+   "description": "The deadlift is a compound exercise that targets the posterior chain, including the hamstrings, glutes, and lower back. It involves lifting a barbell from the ground to hip level while maintaining a neutral spine. Proper form includes engaging the core, keeping the bar close to the body, and controlling the weight throughout the movement.",
+   "gif_asset": "images/gifs/workout_deadlift.gif"
+  },
+  {
+   "name": "Barbell row",
+   "muscle_group": "Back",
+   "equipment": "Barbell",
+   "description": "The barbell row is a compound exercise targeting the back muscles, particularly the lats, traps, and rhomboids, with variations affecting bicep and rear delt activation. It involves hinging at the hips and pulling a barbell towards the torso. Proper form includes maintaining a straight back, engaging the core, and controlling the weight throughout the movement.",
+   "gif_asset": "images/gifs/workout_barbell_row.gif"
+  },
+  {
+   "name": "Pull-up",
+   "muscle_group": "Back",
+   "equipment": "Bodyweight",
+   "description": "Hang from a bar with an overhand grip and pull the chin over the bar."
+  },
+  {
+   "name": "Chin-up",
+   "muscle_group": "Back",
+   "equipment": "Bodyweight",
+   "description": "Pull-up with an underhand grip; more biceps involvement."
+  },
+  {
+   "name": "Lat pulldown",
+   "muscle_group": "Back",
+   "equipment": "Cable",
+   "description": "Seated, pull the bar to the upper chest, driving the elbows down."
+  },
+  {
+   "name": "Seated cable row",
+   "muscle_group": "Back",
+   "equipment": "Cable",
+   "description": "Seated, pull the handle to the stomach keeping the torso upright."
+  },
+  {
+   "name": "Dumbbell row",
+   "muscle_group": "Back",
+   "equipment": "Dumbbell",
+   "description": "One hand and knee on a bench, row the dumbbell to the hip."
+  },
+  {
+   "name": "T-bar row",
+   "muscle_group": "Back",
+   "equipment": "Barbell",
+   "description": "Row a landmine-loaded bar to the chest with a hinged torso."
+  },
+  {
+   "name": "Face pull",
+   "muscle_group": "Shoulders",
+   "equipment": "Cable",
+   "description": "Pull a rope at face height towards the forehead, elbows high; rear delts and upper back."
+  },
+  {
+   "name": "Shrug",
+   "muscle_group": "Back",
+   "equipment": "Dumbbell",
+   "description": "Hold dumbbells at the sides and elevate the shoulders straight up; trapezius."
+  },
+  {
+   "name": "Back extension",
+   "muscle_group": "Back",
+   "equipment": "Bodyweight",
+   "description": "On a hyperextension bench, hinge at the hips and raise the torso; lower back and glutes."
+  },
+  {
+   "name": "Shoulder press",
+   "muscle_group": "Shoulders",
+   "equipment": "Barbell",
+   "description": "The shoulder press is a compound exercise that targets the shoulders, triceps, and upper chest. It involves pressing a barbell or dumbbells overhead while standing or seated. Proper form includes keeping the core engaged, maintaining a neutral spine, and controlling the weight throughout the movement.",
+   "gif_asset": "images/gifs/workout_shoulder_press.gif"
+  },
+  {
+   "name": "Dumbbell shoulder press",
+   "muscle_group": "Shoulders",
+   "equipment": "Dumbbell",
+   "description": "Seated or standing, press dumbbells overhead from shoulder height."
+  },
+  {
+   "name": "Arnold press",
+   "muscle_group": "Shoulders",
+   "equipment": "Dumbbell",
+   "description": "Dumbbell press that rotates the palms from facing you to facing forward on the way up."
+  },
+  {
+   "name": "Lateral raise",
+   "muscle_group": "Shoulders",
+   "equipment": "Dumbbell",
+   "description": "Raise dumbbells out to the sides to shoulder height; side delts."
+  },
+  {
+   "name": "Cable lateral raise",
+   "muscle_group": "Shoulders",
+   "equipment": "Cable",
+   "description": "Single-arm lateral raise from a low pulley; constant tension."
+  },
+  {
+   "name": "Front raise",
+   "muscle_group": "Shoulders",
+   "equipment": "Dumbbell",
+   "description": "Raise dumbbells in front of you to shoulder height; front delts."
+  },
+  {
+   "name": "Reverse fly",
+   "muscle_group": "Shoulders",
+   "equipment": "Dumbbell",
+   "description": "Hinged forward, raise dumbbells out to the sides; rear delts."
+  },
+  {
+   "name": "Upright row",
+   "muscle_group": "Shoulders",
+   "equipment": "Barbell",
+   "description": "Pull a barbell up along the body to chest height, elbows leading."
+  },
+  {
+   "name": "Barbell curl",
+   "muscle_group": "Biceps",
+   "equipment": "Barbell",
+   "description": "Standing, curl the bar from the thighs to the shoulders keeping the elbows still."
+  },
+  {
+   "name": "Dumbbell curl",
+   "muscle_group": "Biceps",
+   "equipment": "Dumbbell",
+   "description": "Curl dumbbells with palms up, alternating or together."
+  },
+  {
+   "name": "Hammer curl",
+   "muscle_group": "Biceps",
+   "equipment": "Dumbbell",
+   "description": "Curl with palms facing each other; biceps and brachialis."
+  },
+  {
+   "name": "Preacher curl",
+   "muscle_group": "Biceps",
+   "equipment": "Barbell",
+   "description": "Curl over a preacher bench to remove momentum."
+  },
+  {
+   "name": "Cable curl",
+   "muscle_group": "Biceps",
+   "equipment": "Cable",
+   "description": "Curl a bar or rope from a low pulley."
+  },
+  {
+   "name": "Tricep pushdown",
+   "muscle_group": "Triceps",
+   "equipment": "Cable",
+   "description": "Push a rope or bar down from a high pulley, elbows pinned to the sides."
+  },
+  {
+   "name": "Skull crusher",
+   "muscle_group": "Triceps",
+   "equipment": "Barbell",
+   "description": "Lying, lower an EZ bar to the forehead by bending the elbows, then extend."
+  },
+  {
+   "name": "Overhead tricep extension",
+   "muscle_group": "Triceps",
+   "equipment": "Dumbbell",
+   "description": "Hold a dumbbell overhead with both hands, lower it behind the head and extend."
+  },
+  {
+   "name": "Close-grip bench press",
+   "muscle_group": "Triceps",
+   "equipment": "Barbell",
+   "description": "Bench press with a shoulder-width grip; triceps emphasis."
+  },
+  {
+   "name": "Tricep dip",
+   "muscle_group": "Triceps",
+   "equipment": "Bodyweight",
+   "description": "Dip with an upright torso to bias the triceps."
+  },
+  {
+   "name": "Squat",
+   "muscle_group": "Quads",
+   "equipment": "Barbell",
+   "description": "The squat is a compound exercise that targets the quadriceps, hamstrings, glutes, and lower back. It involves bending at the knees and hips to lower the body while keeping the chest up and back straight. Proper form includes maintaining a neutral spine, keeping the knees aligned with the toes, and controlling the weight throughout the movement.",
+   "gif_asset": "images/gifs/workout_squat.gif"
+  },
+  {
+   "name": "Front squat",
+   "muscle_group": "Quads",
+   "equipment": "Barbell",
+   "description": "Squat with the bar racked on the front of the shoulders; upright torso, quad emphasis."
+  },
+  {
+   "name": "Goblet squat",
+   "muscle_group": "Quads",
+   "equipment": "Dumbbell",
+   "description": "Squat holding a dumbbell or kettlebell at the chest."
+  },
+  {
+   "name": "Leg press",
+   "muscle_group": "Quads",
+   "equipment": "Machine",
+   "description": "Seated, press the platform away by extending the knees and hips."
+  },
+  {
+   "name": "Leg extension",
+   "muscle_group": "Quads",
+   "equipment": "Machine",
+   "description": "Seated, extend the knees against the pad; isolates the quads."
+  },
+  {
+   "name": "Bulgarian split squat",
+   "muscle_group": "Quads",
+   "equipment": "Dumbbell",
+   "description": "Rear foot elevated on a bench, squat down on the front leg."
+  },
+  {
+   "name": "Walking lunge",
+   "muscle_group": "Quads",
+   "equipment": "Dumbbell",
+   "description": "Step forward into a lunge, alternating legs as you walk."
+  },
+  {
+   "name": "Hack squat",
+   "muscle_group": "Quads",
+   "equipment": "Machine",
+   "description": "Squat on a hack squat machine with the back supported."
+  },
+  {
+   "name": "Romanian deadlift",
+   "muscle_group": "Hamstrings",
+   "equipment": "Barbell",
+   "description": "Hinge at the hips with soft knees, lowering the bar along the legs; hamstrings and glutes."
+  },
+  {
+   "name": "Leg curl",
+   "muscle_group": "Hamstrings",
+   "equipment": "Machine",
+   "description": "Curl the pad towards the glutes by bending the knees; isolates the hamstrings."
+  },
+  {
+   "name": "Good morning",
+   "muscle_group": "Hamstrings",
+   "equipment": "Barbell",
+   "description": "Bar on the back, hinge forward at the hips with a flat back and return."
+  },
+  {
+   "name": "Hip thrust",
+   "muscle_group": "Glutes",
+   "equipment": "Barbell",
+   "description": "Upper back on a bench, drive the hips up with a bar across them."
+  },
+  {
+   "name": "Glute bridge",
+   "muscle_group": "Glutes",
+   "equipment": "Bodyweight",
+   "description": "Lying on your back, drive the hips up by squeezing the glutes."
+  },
+  {
+   "name": "Cable kickback",
+   "muscle_group": "Glutes",
+   "equipment": "Cable",
+   "description": "Kick one leg back against a low pulley ankle strap."
+  },
+  {
+   "name": "Standing calf raise",
+   "muscle_group": "Calves",
+   "equipment": "Machine",
+   "description": "Rise onto the toes against resistance, pause, lower under control."
+  },
+  {
+   "name": "Seated calf raise",
+   "muscle_group": "Calves",
+   "equipment": "Machine",
+   "description": "Seated calf raise; targets the soleus."
+  },
+  {
+   "name": "Plank",
+   "muscle_group": "Core",
+   "equipment": "Bodyweight",
+   "description": "Hold a straight-body position on forearms and toes. Log reps as seconds held."
+  },
+  {
+   "name": "Crunch",
+   "muscle_group": "Core",
+   "equipment": "Bodyweight",
+   "description": "Lying, curl the shoulders towards the hips."
+  },
+  {
+   "name": "Hanging leg raise",
+   "muscle_group": "Core",
+   "equipment": "Bodyweight",
+   "description": "Hanging from a bar, raise the legs to hip height or higher."
+  },
+  {
+   "name": "Cable crunch",
+   "muscle_group": "Core",
+   "equipment": "Cable",
+   "description": "Kneeling, crunch down against a rope on a high pulley."
+  },
+  {
+   "name": "Russian twist",
+   "muscle_group": "Core",
+   "equipment": "Bodyweight",
+   "description": "Seated and leaning back, rotate the torso side to side."
+  },
+  {
+   "name": "Ab wheel rollout",
+   "muscle_group": "Core",
+   "equipment": "Other",
+   "description": "Kneeling, roll the wheel forward as far as you can control, then pull back."
+  },
+  {
+   "name": "Kettlebell swing",
+   "muscle_group": "Full body",
+   "equipment": "Kettlebell",
+   "description": "Hinge and snap the hips to swing the kettlebell to chest height."
+  },
+  {
+   "name": "Clean and press",
+   "muscle_group": "Full body",
+   "equipment": "Barbell",
+   "description": "Pull the bar from the floor to the shoulders, then press it overhead."
+  },
+  {
+   "name": "Farmer's walk",
+   "muscle_group": "Full body",
+   "equipment": "Dumbbell",
+   "description": "Walk while holding heavy weights at your sides; grip and core."
+  },
+  {
+   "name": "Burpee",
+   "muscle_group": "Full body",
+   "equipment": "Bodyweight",
+   "description": "Squat, kick back to a plank, push-up, jump up. Conditioning."
+  }
+ ]
+}

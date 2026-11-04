@@ -17,3 +17,8 @@ class Images {
   static const IconData addIcon = Icons.add;
   static const IconData viewIcon = Icons.remove_red_eye;
 }
+
+/// Non-image bundled assets.
+class DataAssets {
+  static const String exerciseSeed = 'assets/data/exercises.json';
+}
