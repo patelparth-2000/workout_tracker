@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../src/exercises/view/exercise_detail_screen.dart';
+import '../src/exercises/view/exercise_edit_screen.dart';
+import '../src/exercises/view/exercise_picker_screen.dart';
 import '../src/exercises/view/exercises_screen.dart';
 import '../src/history/view/history_screen.dart';
 import '../src/progress/view/progress_screen.dart';
@@ -18,6 +21,7 @@ class _AppPaths {
   static const String exercises = '/exercises';
   static const String progress = '/progress';
   static const String settings = '/settings';
+  static const String exercisePicker = '/pick-exercise';
 }
 
 /// Use these for named navigation. Arguments travel as path parameters (ids), never as
@@ -29,7 +33,17 @@ class RouteNames {
   static const String exercises = 'exercises';
   static const String progress = 'progress';
   static const String settings = 'settings';
+  static const String exerciseNew = 'exerciseNew';
+  static const String exerciseDetail = 'exerciseDetail';
+  static const String exerciseEdit = 'exerciseEdit';
+
+  /// Pops with the chosen exercise id: `await context.pushNamed<int>(exercisePicker)`.
+  static const String exercisePicker = 'exercisePicker';
 }
+
+/// Reads an integer path parameter. Malformed ids become -1 (renders "not found").
+int _id(GoRouterState state, String name) =>
+    int.tryParse(state.pathParameters[name] ?? '') ?? -1;
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
@@ -43,6 +57,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: _AppPaths.startup,
         name: RouteNames.startup,
         builder: (context, state) => const StartupScreen(),
+      ),
+      GoRoute(
+        path: _AppPaths.exercisePicker,
+        name: RouteNames.exercisePicker,
+        builder: (context, state) => const ExercisePickerScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
@@ -71,6 +90,31 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: _AppPaths.exercises,
                 name: RouteNames.exercises,
                 builder: (context, state) => const ExercisesScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'new',
+                    name: RouteNames.exerciseNew,
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (context, state) => const ExerciseEditScreen(),
+                  ),
+                  GoRoute(
+                    path: ':exerciseId',
+                    name: RouteNames.exerciseDetail,
+                    builder: (context, state) => ExerciseDetailScreen(
+                      exerciseId: _id(state, 'exerciseId'),
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'edit',
+                        name: RouteNames.exerciseEdit,
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) => ExerciseEditScreen(
+                          exerciseId: _id(state, 'exerciseId'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
