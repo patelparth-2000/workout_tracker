@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../common/widget/async_value_view.dart';
 import '../../../common/widget/empty_state.dart';
-import '../../../data/app_database.dart';
 import '../../../routes/app_routes.dart';
 import '../viewmodel/exercise_providers.dart';
-import 'widget/exercise_filter_bar.dart';
-import 'widget/exercise_tile.dart';
+import 'widget/exercise_sliver_list.dart';
 
 const _scope = 'picker';
 
@@ -30,29 +27,17 @@ class ExercisePickerScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          const ExerciseFilterBar(scope: _scope, showArchivedToggle: false),
-          Expanded(
-            child: AsyncValueView<List<Exercise>>(
-              value: list,
-              onRetry: () => ref.invalidate(exerciseListProvider(_scope)),
-              isEmpty: (l) => l.isEmpty,
-              empty: const EmptyState(
-                icon: Icons.search_off,
-                title: 'No exercises match',
-                message: 'Change the search, or create a new exercise with +.',
-              ),
-              data: (exercises) => ListView.builder(
-                itemCount: exercises.length,
-                itemBuilder: (context, i) => ExerciseTile(
-                  exercise: exercises[i],
-                  onTap: () => context.pop(exercises[i].id),
-                ),
-              ),
-            ),
-          ),
-        ],
+      body: ExerciseSliverList(
+        scope: _scope,
+        exercises: list,
+        showArchivedToggle: false,
+        onRetry: () => ref.invalidate(exerciseListProvider(_scope)),
+        onTap: (e) => context.pop(e.id),
+        empty: const EmptyState(
+          icon: Icons.search_off,
+          title: 'No exercises match',
+          message: 'Change the search, or create a new exercise with +.',
+        ),
       ),
     );
   }

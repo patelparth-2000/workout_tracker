@@ -98,3 +98,16 @@ Future<void> openTab(WidgetTester tester, String label) async {
   );
   await settle(tester);
 }
+
+/// Scrolls the main vertical scroll view until [finder] is visible, then taps it.
+Future<void> scrollAndTap(WidgetTester tester, Finder finder) async {
+  final page = find.byWidgetPredicate(
+    (w) => w is Scrollable && w.axisDirection == AxisDirection.down,
+  );
+  if (finder.evaluate().isEmpty || !tester.any(finder.hitTestable())) {
+    await tester.scrollUntilVisible(finder, 150, scrollable: page.first);
+    await settle(tester);
+  }
+  await tester.tap(finder);
+  await settle(tester);
+}

@@ -247,7 +247,9 @@ class _RoutineEditScreenState extends ConsumerState<RoutineEditScreen> {
                   onRemove: () => _change(() => _items.removeAt(i)),
                 ),
               ),
-            const SliverToBoxAdapter(child: SizedBox(height: 96)),
+            const SliverToBoxAdapter(
+              child: SizedBox(height: AppSizes.fabClearance),
+            ),
           ],
         ),
       ),
@@ -333,7 +335,7 @@ class _RoutineItemCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 120,
+                  width: AppSizes.compactField,
                   child: TextFormField(
                     initialValue: d.targetReps?.toString() ?? '',
                     keyboardType: TextInputType.number,
@@ -348,21 +350,28 @@ class _RoutineItemCard extends StatelessWidget {
                     },
                   ),
                 ),
-                DropdownButton<int?>(
-                  value: d.restSeconds,
-                  hint: const Text('Rest: default'),
-                  items: [
-                    for (final r in _restChoices)
-                      DropdownMenuItem(
-                        value: r,
-                        child: Text(
-                          r == null
-                              ? 'Rest: default'
-                              : 'Rest ${formatClock(Duration(seconds: r))}',
+                // Full width + isExpanded: sized to its items it overflowed at 2x text.
+                SizedBox(
+                  width: double.infinity,
+                  child: DropdownButtonFormField<int?>(
+                    initialValue: d.restSeconds,
+                    isExpanded: true,
+                    decoration: const InputDecoration(labelText: 'Rest'),
+                    items: [
+                      for (final r in _restChoices)
+                        DropdownMenuItem(
+                          value: r,
+                          child: Text(
+                            r == null
+                                ? 'Settings default'
+                                : formatClock(Duration(seconds: r)),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                  ],
-                  onChanged: (v) => onChanged(d.copyWith(restSeconds: () => v)),
+                    ],
+                    onChanged: (v) =>
+                        onChanged(d.copyWith(restSeconds: () => v)),
+                  ),
                 ),
               ],
             ),

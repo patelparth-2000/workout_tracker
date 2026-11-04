@@ -29,35 +29,44 @@ class RoutineCard extends StatelessWidget {
         onTap: onEdit,
         child: Padding(
           padding: AppInsets.card,
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      summary.routine.name,
-                      style: Theme.of(context).textTheme.titleMedium,
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          summary.routine.name,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        Text('$n exercise${n == 1 ? '' : 's'}'),
+                      ],
                     ),
-                    Text('$n exercise${n == 1 ? '' : 's'}'),
-                  ],
-                ),
-              ),
-              FilledButton.tonal(
-                onPressed: startEnabled ? onStart : null,
-                child: Semantics(
-                  label: 'Start ${summary.routine.name}',
-                  excludeSemantics: true,
-                  child: const Text('Start'),
-                ),
-              ),
-              PopupMenuButton<String>(
-                tooltip: 'More options for ${summary.routine.name}',
-                onSelected: (v) => v == 'edit' ? onEdit() : onDelete(),
-                itemBuilder: (context) => const [
-                  PopupMenuItem(value: 'edit', child: Text('Edit')),
-                  PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  ),
+                  PopupMenuButton<String>(
+                    tooltip: 'More options for ${summary.routine.name}',
+                    onSelected: (v) => v == 'edit' ? onEdit() : onDelete(),
+                    itemBuilder: (context) => const [
+                      PopupMenuItem(value: 'edit', child: Text('Edit')),
+                      PopupMenuItem(value: 'delete', child: Text('Delete')),
+                    ],
+                  ),
                 ],
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: FilledButton.tonalIcon(
+                  onPressed: startEnabled ? onStart : null,
+                  icon: const Icon(Icons.play_arrow),
+                  label: Semantics(
+                    label: 'Start ${summary.routine.name}',
+                    excludeSemantics: true,
+                    child: const Text('Start'),
+                  ),
+                ),
               ),
             ],
           ),

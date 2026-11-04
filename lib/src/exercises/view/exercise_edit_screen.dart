@@ -152,6 +152,7 @@ class _ExerciseEditScreenState extends ConsumerState<ExerciseEditScreen> {
             const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String>(
               initialValue: _muscle,
+              isExpanded: true,
               decoration: const InputDecoration(labelText: 'Muscle group'),
               items: [
                 for (final m in muscleGroupOptions)
@@ -162,6 +163,7 @@ class _ExerciseEditScreenState extends ConsumerState<ExerciseEditScreen> {
             const SizedBox(height: AppSpacing.lg),
             DropdownButtonFormField<String>(
               initialValue: _equipment,
+              isExpanded: true,
               decoration: const InputDecoration(labelText: 'Equipment'),
               items: [
                 for (final m in equipmentOptions)

@@ -14,16 +14,19 @@ class SectionHeader extends StatelessWidget {
     final theme = Theme.of(context);
     return Padding(
       padding: AppInsets.section,
-      child: Row(
+      // Wrap, not Row: at large text sizes the trailing action moves to its own line
+      // instead of squeezing the title to one letter per line.
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: AppSpacing.sm,
         children: [
-          Expanded(
-            child: Semantics(
-              header: true,
-              child: Text(
-                title,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
+          Semantics(
+            header: true,
+            child: Text(
+              title,
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: theme.colorScheme.primary,
               ),
             ),
           ),

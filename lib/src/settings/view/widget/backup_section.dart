@@ -5,6 +5,7 @@ import '../../../../common/widget/confirm_dialog.dart';
 import '../../../../common/widget/section_header.dart';
 import '../../../../common/widget/show_toast.dart';
 import '../../../../data/backup/backup_codec.dart';
+import '../../../../utils/app_spacing.dart';
 import '../../viewmodel/backup_controller.dart';
 
 /// Export backup / export CSV / restore. One action at a time; each shows progress.
@@ -59,7 +60,7 @@ class _BackupSectionState extends ConsumerState<BackupSection> {
 
   Widget? _trailing(String key) => _busy == key
       ? const SizedBox.square(
-          dimension: 24,
+          dimension: AppSizes.inlineProgress,
           child: CircularProgressIndicator(strokeWidth: 2),
         )
       : null;

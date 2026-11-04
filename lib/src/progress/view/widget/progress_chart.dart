@@ -75,7 +75,7 @@ class ProgressChart extends StatelessWidget {
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 44,
+                    reservedSize: AppSizes.chartLeftAxis,
                     getTitlesWidget: (v, meta) => SideTitleWidget(
                       meta: meta,
                       child: Text(
@@ -88,7 +88,7 @@ class ProgressChart extends StatelessWidget {
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 28,
+                    reservedSize: AppSizes.chartBottomAxis,
                     interval: spots.last.x <= 0
                         ? 1
                         : (spots.last.x / 3).ceilToDouble(),
@@ -122,7 +122,7 @@ class ProgressChart extends StatelessWidget {
                   spots: spots,
                   isCurved: false,
                   color: colors.chartPrimary,
-                  barWidth: 3,
+                  barWidth: AppSizes.chartLine,
                   dotData: const FlDotData(show: true),
                 ),
               ],

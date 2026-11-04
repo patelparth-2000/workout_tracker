@@ -157,23 +157,22 @@ class _ActiveSession extends ConsumerWidget {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: InkWell(
-          onTap: () => _rename(context, ref),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Semantics(
-                hint: 'Double tap to rename',
-                child: Text(session.name, overflow: TextOverflow.ellipsis),
-              ),
-              ElapsedText(
-                since: session.startedAt,
-                style: theme.textTheme.bodySmall,
-              ),
-            ],
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(session.name, overflow: TextOverflow.ellipsis),
+            ElapsedText(
+              since: session.startedAt,
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
         ),
         actions: [
+          IconButton(
+            tooltip: 'Rename workout',
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: () => _rename(context, ref),
+          ),
           FilledButton(
             onPressed: () => _finish(context, ref, detail.value),
             child: const Text('Finish'),

@@ -30,6 +30,13 @@ class AppSizes {
   static const double logo = 160;
   static const double timerRing = 44;
   static const double maxContentWidth = 720;
+  static const double inlineProgress = 24;
+  static const double compactField = 120;
+  static const double statTileMinWidth = 160;
+  static const double chartLeftAxis = 44;
+  static const double chartBottomAxis = 28;
+  static const double chartLine = 3;
+  static const double fabClearance = 96;
 }
 
 class AppInsets {
@@ -50,5 +57,7 @@ class AppInsets {
   );
 
   /// Leaves room under the last list item for a floating action button.
-  static const EdgeInsets listWithFab = EdgeInsets.only(bottom: 96);
+  static const EdgeInsets listWithFab = EdgeInsets.only(
+    bottom: AppSizes.fabClearance,
+  );
 }

@@ -42,7 +42,9 @@ class ExerciseBestsGrid extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, c) {
         final scale = MediaQuery.textScalerOf(context).scale(1);
-        final columns = (c.maxWidth / (160 * scale)).floor().clamp(1, 3);
+        final columns = (c.maxWidth / (AppSizes.statTileMinWidth * scale))
+            .floor()
+            .clamp(1, 3);
         final width = (c.maxWidth - AppSpacing.sm * (columns - 1)) / columns;
         return Wrap(
           spacing: AppSpacing.sm,
