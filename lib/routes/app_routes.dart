@@ -10,6 +10,7 @@ import '../src/exercises/view/exercises_screen.dart';
 import '../src/history/view/history_screen.dart';
 import '../src/history/view/session_detail_screen.dart';
 import '../src/progress/view/progress_screen.dart';
+import '../src/settings/view/plate_calculator_screen.dart';
 import '../src/settings/view/settings_screen.dart';
 import '../src/shell/view/app_shell.dart';
 import '../src/startup/view/startup_screen.dart';
@@ -40,6 +41,7 @@ class RouteNames {
   static const String activeWorkout = 'activeWorkout';
   static const String routineNew = 'routineNew';
   static const String sessionDetail = 'sessionDetail';
+  static const String plateCalculator = 'plateCalculator';
   static const String routineEdit = 'routineEdit';
   static const String exerciseNew = 'exerciseNew';
   static const String exerciseDetail = 'exerciseDetail';
@@ -169,6 +171,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: _AppPaths.settings,
                 name: RouteNames.settings,
                 builder: (context, state) => const SettingsScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'plates',
+                    name: RouteNames.plateCalculator,
+                    builder: (context, state) => const PlateCalculatorScreen(),
+                  ),
+                ],
               ),
             ],
           ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../common/widget/async_value_view.dart';
 import '../../../common/widget/section_header.dart';
 import '../../../data/app_database.dart';
+import '../../../routes/app_routes.dart';
 import '../../../utils/app_spacing.dart';
 import '../../../utils/units.dart';
 import '../../../utils/workout_math.dart';
@@ -98,6 +100,14 @@ class _SettingsList extends ConsumerWidget {
             selected: {settings.themeMode},
             onSelectionChanged: (s) => controller.setThemeMode(s.single),
           ),
+        ),
+        const SectionHeader(title: 'Tools'),
+        ListTile(
+          leading: const Icon(Icons.calculate_outlined),
+          title: const Text('Plate calculator'),
+          subtitle: const Text('Which plates to load on each side'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.pushNamed(RouteNames.plateCalculator),
         ),
         const BackupSection(),
         const SizedBox(height: AppSpacing.xl),
