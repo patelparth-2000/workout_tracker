@@ -8,6 +8,7 @@ import '../src/exercises/view/exercise_edit_screen.dart';
 import '../src/exercises/view/exercise_picker_screen.dart';
 import '../src/exercises/view/exercises_screen.dart';
 import '../src/history/view/history_screen.dart';
+import '../src/history/view/session_detail_screen.dart';
 import '../src/progress/view/progress_screen.dart';
 import '../src/settings/view/settings_screen.dart';
 import '../src/shell/view/app_shell.dart';
@@ -38,6 +39,7 @@ class RouteNames {
   static const String settings = 'settings';
   static const String activeWorkout = 'activeWorkout';
   static const String routineNew = 'routineNew';
+  static const String sessionDetail = 'sessionDetail';
   static const String routineEdit = 'routineEdit';
   static const String exerciseNew = 'exerciseNew';
   static const String exerciseDetail = 'exerciseDetail';
@@ -107,6 +109,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: _AppPaths.history,
                 name: RouteNames.history,
                 builder: (context, state) => const HistoryScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':sessionId',
+                    name: RouteNames.sessionDetail,
+                    builder: (context, state) =>
+                        SessionDetailScreen(sessionId: _id(state, 'sessionId')),
+                  ),
+                ],
               ),
             ],
           ),

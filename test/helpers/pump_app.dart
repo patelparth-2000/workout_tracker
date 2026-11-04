@@ -69,6 +69,12 @@ Future<void> settle(WidgetTester tester) async {
     );
     await tester.pumpAndSettle();
   }
+  // Let short debounce timers (e.g. the history refresh) fire, then settle again.
+  await tester.pump(const Duration(milliseconds: 400));
+  await tester.runAsync(
+    () => Future<void>.delayed(const Duration(milliseconds: 5)),
+  );
+  await tester.pumpAndSettle();
 }
 
 /// Runs ONE database call on real time, then settles the UI.
