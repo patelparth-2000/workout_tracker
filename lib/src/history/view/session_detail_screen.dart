@@ -15,6 +15,7 @@ import '../../../utils/clock.dart';
 import '../../../utils/units.dart';
 import '../../../utils/workout_math.dart';
 import '../../active_workout/viewmodel/active_workout_providers.dart';
+import '../../progress/viewmodel/progress_providers.dart';
 import '../../settings/viewmodel/settings_provider.dart';
 import '../viewmodel/history_providers.dart';
 import 'widget/edit_set_dialog.dart';
@@ -116,6 +117,8 @@ class _DetailBody extends ConsumerWidget {
     final theme = Theme.of(context);
     final colors = AppColors.of(context);
     final s = detail.session;
+    final records =
+        ref.watch(recordSetIdsProvider(s.id)).value ?? const <int>{};
     final duration = s.endedAt?.difference(s.startedAt);
     final completed = detail.exercises.fold<int>(
       0,
@@ -193,8 +196,29 @@ class _DetailBody extends ConsumerWidget {
                         '${i + 1}',
                         style: theme.textTheme.titleSmall,
                       ),
-                      title: Text(
-                        '${formatWeight(set.weightKg, unit)} × ${set.reps}',
+                      title: Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              '${formatWeight(set.weightKg, unit)} × ${set.reps}',
+                            ),
+                          ),
+                          if (records.contains(set.id)) ...[
+                            const SizedBox(width: AppSpacing.sm),
+                            Icon(
+                              Icons.emoji_events,
+                              size: AppSizes.iconSm,
+                              color: colors.record,
+                              semanticLabel: 'Personal record',
+                            ),
+                            Text(
+                              ' PR',
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                color: colors.record,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       subtitle: set.completedAt == null
                           ? const Text('Not done (not counted)')

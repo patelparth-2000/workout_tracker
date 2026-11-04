@@ -12,6 +12,7 @@ import '../../../data/app_database.dart';
 import '../../../data/models.dart';
 import '../../../routes/app_routes.dart';
 import '../../../utils/app_spacing.dart';
+import '../../progress/viewmodel/progress_providers.dart';
 import '../../settings/viewmodel/settings_provider.dart';
 import '../viewmodel/active_workout_providers.dart';
 import 'widget/elapsed_text.dart';
@@ -151,6 +152,8 @@ class _ActiveSession extends ConsumerWidget {
     final previous =
         ref.watch(previousSetsProvider(session.id)).value ?? const {};
     final unit = ref.watch(weightUnitProvider);
+    final records =
+        ref.watch(recordSetIdsProvider(session.id)).value ?? const {};
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
@@ -198,6 +201,7 @@ class _ActiveSession extends ConsumerWidget {
                   detail: e,
                   unit: unit,
                   previous: previous[e.exercise.id] ?? const [],
+                  recordSetIds: records,
                   isFirst: i == 0,
                   isLast: i == exercises.length - 1,
                   onSetChanged: (set, kg, reps) =>

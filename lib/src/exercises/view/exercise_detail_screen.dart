@@ -9,6 +9,9 @@ import '../../../common/widget/show_toast.dart';
 import '../../../data/app_database.dart';
 import '../../../routes/app_routes.dart';
 import '../../../utils/app_spacing.dart';
+import '../../progress/view/widget/exercise_bests_grid.dart';
+import '../../progress/viewmodel/progress_providers.dart';
+import '../../settings/viewmodel/settings_provider.dart';
 import '../viewmodel/exercise_providers.dart';
 
 class ExerciseDetailScreen extends ConsumerWidget {
@@ -64,14 +67,16 @@ class ExerciseDetailScreen extends ConsumerWidget {
   }
 }
 
-class _Details extends StatelessWidget {
+class _Details extends ConsumerWidget {
   const _Details({required this.exercise});
 
   final Exercise exercise;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final bests = ref.watch(exerciseBestsProvider(exercise.id)).value;
+    final unit = ref.watch(weightUnitProvider);
     final gif = exercise.gifAsset;
     return ListView(
       padding: const EdgeInsets.only(bottom: AppSpacing.xl),
@@ -113,6 +118,13 @@ class _Details extends StatelessWidget {
             style: theme.textTheme.bodyLarge,
           ),
         ),
+        if (bests != null && bests.sessionCount > 0) ...[
+          const SectionHeader(title: 'Your records'),
+          Padding(
+            padding: AppInsets.screenH,
+            child: ExerciseBestsGrid(bests: bests, unit: unit),
+          ),
+        ],
       ],
     );
   }
