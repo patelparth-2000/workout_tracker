@@ -1,0 +1,18 @@
+# drift writes its own part files (*.drift.dart) with the not_shared builder, ordered before
+# riverpod_generator. With drift's default shared builder its classes (e.g. AppSettingsData)
+# only appear in the combined *.g.dart AFTER riverpod_generator has run, so any provider
+# whose signature mentions a drift class fails with InvalidTypeException.
+targets:
+  $default:
+    builders:
+      drift_dev:
+        enabled: false
+      drift_dev:preparing_builder:
+        enabled: true
+      drift_dev:not_shared:
+        enabled: true
+
+global_options:
+  drift_dev:not_shared:
+    runs_before:
+      - riverpod_generator:riverpod_generator

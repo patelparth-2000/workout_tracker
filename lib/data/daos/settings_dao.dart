@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../app_database.dart';
 
-part 'settings_dao.g.dart';
+part 'settings_dao.drift.dart';
 
 @DriftAccessor(tables: [AppSettings])
 class SettingsDao extends DatabaseAccessor<AppDatabase>

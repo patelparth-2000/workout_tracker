@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../app_database.dart';
 
-part 'exercise_dao.g.dart';
+part 'exercise_dao.drift.dart';
 
 /// Thrown when a name collides (case-insensitively) with an existing exercise.
 class DuplicateExerciseNameException implements Exception {

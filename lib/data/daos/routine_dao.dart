@@ -3,7 +3,7 @@ import 'package:drift/drift.dart';
 import '../app_database.dart';
 import '../models.dart';
 
-part 'routine_dao.g.dart';
+part 'routine_dao.drift.dart';
 
 @DriftAccessor(tables: [Routines, RoutineExercises, Exercises])
 class RoutineDao extends DatabaseAccessor<AppDatabase> with _$RoutineDaoMixin {

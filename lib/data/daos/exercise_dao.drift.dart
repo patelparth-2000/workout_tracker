@@ -1,8 +1,7 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
+// dart format width=80
+// ignore_for_file: type=lint
 part of 'exercise_dao.dart';
 
-// ignore_for_file: type=lint
 mixin _$ExerciseDaoMixin on DatabaseAccessor<AppDatabase> {
   $ExercisesTable get exercises => attachedDatabase.exercises;
   ExerciseDaoManager get managers => ExerciseDaoManager(this);

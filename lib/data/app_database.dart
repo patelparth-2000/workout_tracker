@@ -8,7 +8,7 @@ import 'tables.dart';
 
 export 'tables.dart';
 
-part 'app_database.g.dart';
+part 'app_database.drift.dart';
 
 /// Supplies the exercises inserted when the database is first created.
 typedef ExerciseSeedLoader = Future<List<ExercisesCompanion>> Function();

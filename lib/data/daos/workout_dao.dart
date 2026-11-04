@@ -3,7 +3,7 @@ import 'package:drift/drift.dart';
 import '../app_database.dart';
 import '../models.dart';
 
-part 'workout_dao.g.dart';
+part 'workout_dao.drift.dart';
 
 /// Only one workout may be in progress at a time.
 class ActiveSessionExistsException implements Exception {
