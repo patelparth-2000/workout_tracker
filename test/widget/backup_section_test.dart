@@ -155,4 +155,31 @@ void main() {
     surfaceSize: const Size(800, 1800),
     overrides: [backupPlatformProvider.overrideWithValue(badFake)],
   );
+
+  final cancelFake = FakeBackupPlatform();
+  testAppWidgets(
+    'cancelling the confirmation keeps the current data',
+    (app) async {
+      final tester = app.tester;
+      cancelFake.toPick = await tester.runAsync(() => _backupOf((_) async {}));
+      await _openBackup(tester, 'Restore from backup');
+      expect(find.text('Replace all data?'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await settle(tester);
+      final sessions = await dbCall(
+        tester,
+        () => app.db.select(app.db.workoutSessions).get(),
+      );
+      expect(sessions, hasLength(1));
+      expect(find.text('Backup restored'), findsNothing);
+    },
+    setup: (db) => logFinishedSession(
+      db,
+      exercise: 'Squat',
+      at: DateTime(2025),
+      sets: [(1, 1)],
+    ),
+    surfaceSize: const Size(800, 1800),
+    overrides: [backupPlatformProvider.overrideWithValue(cancelFake)],
+  );
 }
