@@ -1,38 +1,31 @@
 # workout_tracker
 
-A small Flutter phone app that logs gym sets. Pick one of **five hardcoded exercises** (Barbell
-row, Bench press, Shoulder press, Deadlift, Squat), type weight / repetitions / sets as free text,
-save. Saved entries appear in a list you can edit, view (animated GIF + description in a bottom
-sheet), delete individually, or clear wholesale. Everything lives on-device as one JSON string in
-GetStorage.
+A local-first Flutter strength-training logger (v2). Live workout logging with previous values
+and a rest timer, routines, a 65-exercise library with custom exercises, paged history,
+progress charts with personal records, kg/lb, a plate calculator, JSON backup/restore and CSV
+export, light/dark themes. **No backend, no account, no network.** Data lives in on-device SQLite.
 
-No backend, no account, no sync, **no date or timestamp on an entry**. It is a scratchpad, not a
-training history. Learning / portfolio project, not a product.
+## Status: v2 on a branch, not yet merged
 
-## Status: complete, and dormant
-
-- All **3 commits are from 2025-08-13** (`2fa80d5`, `bb617bb`, `8383f03`). Nothing since.
-- `main`, clean, in sync with `origin/main` (https://github.com/patelparth-2000/workout_tracker.git).
-- Verified 2026-08-23: `flutter analyze` -> **No issues found**; `flutter test` -> **2 tests, 2 passing**.
-
-It is not a stub and not abandoned mid-edit — the add / edit / delete / persist loop works end to
-end. It is finished-and-parked. There is **no TODO, roadmap or planning doc anywhere in the repo**,
-so there is no stated next step; direction has to come from the owner.
+- v2 was built on **`claude/sweet-bardeen-e4aswb`** by a cloud session on 2026-11-04. `main`
+  (`a3b718b`) is still v1, a three-screen GetStorage scratchpad.
+- Verified 2026-11-04: `flutter analyze` → **No issues found**; `flutter test` → **170 tests, 170 passing**.
+- Hand-off and on-phone checklist: `docs/V2_PROGRESS.md`. Log: `BOARD.md`.
+- The MVP line, the real `applicationId` and the merge are the owner's decisions.
 
 ## Stack
 
 | | |
 |---|---|
 | Flutter / Dart | 3.41.9 stable / Dart 3.11.5 (pubspec constraint `sdk: ^3.8.1`) |
-| flutter_riverpod + riverpod_annotation | 2.6.1 — one major behind 3.x; codegen, not hand-written providers |
-| go_router | 16.1.0, named routes only |
-| get_storage | 2.1.1 — the entire persistence layer (no Hive, no repository layer) |
-| flutter_lints | 5.0.0, stock, every custom rule left commented out |
-| build_runner / riverpod_generator | 2.5.4 / 2.6.5 |
+| flutter_riverpod + riverpod_annotation / riverpod_generator | 3.3.1 + 4.0.2 / 4.0.3, codegen only |
+| go_router | 16.1, named routes, `StatefulShellRoute` with 5 tabs |
+| drift + drift_flutter / drift_dev | 2.31 + 0.2.8, SQLite, schema v1 |
+| fl_chart, share_plus, file_picker, path_provider, intl | charts, backup sharing/picking, dates |
+| get_storage | 2.1.1, **read-only**, only for the one-shot v1 import |
+| flutter_lints | 5.0.0 |
 
-21 Dart files under `lib/`, 1 test file.
-
-## Commands — Flutter is NOT on PATH
+## Commands — Flutter is NOT on PATH on the owner's machine
 
 The SDK lives at `C:\Flutter_sdk_src\flutter\bin\flutter.bat`. Invoke it explicitly:
 
@@ -41,90 +34,68 @@ The SDK lives at `C:\Flutter_sdk_src\flutter\bin\flutter.bat`. Invoke it explici
 & 'C:\Flutter_sdk_src\flutter\bin\flutter.bat' analyze
 & 'C:\Flutter_sdk_src\flutter\bin\flutter.bat' test
 & 'C:\Flutter_sdk_src\flutter\bin\flutter.bat' run
-& 'C:\Flutter_sdk_src\flutter\bin\flutter.bat' pub run build_runner build --delete-conflicting-outputs
+& 'C:\Flutter_sdk_src\flutter\bin\flutter.bat' pub run build_runner build
 ```
 
-The SDK folder was **renamed** from `C:\Flutter SDK src\`. Stale build stamps under
-`.dart_tool/flutter_build/` still reference the old path and produce misleading "package not found"
-errors — `pub get` first clears that up. Expect `pub get` to rewrite `pubspec.lock` (~19 transitive
-bumps); that diff is normal, unrelated to your change, and is **not** committed today.
-
-`.g.dart` codegen files are **tracked in git**. Change anything annotated `@riverpod` and you must
-regenerate and commit the `.g.dart` alongside it. Forgetting is the easiest way to break this repo.
+Generated code (`*.g.dart` from Riverpod, `*.drift.dart` from drift) is **tracked in git**.
+Change any `@riverpod` provider, drift table or DAO, then regenerate and commit the output with
+the source. `build.yaml` makes drift generate its own parts before riverpod_generator; do not
+remove it. This build_runner version ignores `--delete-conflicting-outputs`.
 
 ## Layout
 
 ```
 lib/
-  main.dart                     GetStorage.init + ProviderScope + MaterialApp.router
-  routes/app_routes.dart        goRouterProvider, _AppPaths (private), RouteNames (public)
-  common/common_function.dart   the 5 workoutTypes + the GLOBAL `storage` instance
-  common/widget/                show_toast.dart (global scaffoldMessengerKey), view_exercise_bottom_sheet.dart
-  src/splash_screen/            3-second Timer, then goNamed(workoutListScreen)
-  src/workout_list_screen/      view/ + view/widget/ + viewmodel/workout_list_provider.dart (+.g)
-  src/workout_screen/           model/workout_model.dart + view/ + viewmodel/workout_provider.dart (+.g)
-  utils/                        color_constant.dart (semantic colours), images.dart (asset paths)
-test/unit/workout_provider_test.dart
+  main.dart, app.dart          ProviderScope (no silent retry) + MaterialApp.router + themes
+  routes/app_routes.dart       goRouterProvider (only hand-written provider), _AppPaths, RouteNames
+  data/                        drift: tables.dart, app_database.dart, daos/, models.dart,
+                               seed/ (assets/data/exercises.json), legacy/ (v1 import), backup/
+  src/<feature>/{model,view,view/widget,viewmodel}
+                               startup, shell, workout (home + routines), active_workout,
+                               history, exercises, progress, settings (+ backup, plate calculator)
+  common/widget/               AsyncValueView, Empty/Error/LoadingState, ConfirmDialog,
+                               SectionHeader, showToast
+  utils/                       color_constant (tokens), app_spacing, app_theme, images,
+                               units, workout_math, plate_math, clock
+test/  data/ (in-memory SQLite) · unit/ · widget/ (+ accessibility_test.dart) · helpers/
 ```
 
-`src/<feature>/{model,view,viewmodel}` is deliberate and consistently applied (the README calls it
-MVVM) — follow it for new features. **Two different files are named `list_widget.dart`**, one per
-feature; the path disambiguates them. `list_text_wigdet.dart` / `ListTextWigdet` is a typo, left as-is.
+The full rules are in **`docs/RULEBOOK.md`**; architecture and decisions are in **`docs/ARCHITECTURE.md`**.
 
-Conventions (habit, not lint-enforced; full list in the manager skill): navigate by name
-(`RouteNames`, never `_AppPaths`); no raw `Color(...)` or asset strings in widgets (add to
-`color_constant.dart` / `images.dart`); user feedback via `showToast(message:)`, never
-`ScaffoldMessenger.of(context)`.
+Conventions: navigate by name; pass ids as path params (never objects in `extra:`); no raw
+colours or magic spacing in screens; feedback via `showToast(message:)`; DAOs are the data layer
+(no repositories); weights stored in kg; command controllers are `keepAlive`; time comes
+from `clockProvider`.
 
 ## Traps
 
-1. **`updateWorkout` matches by object identity, not value.** `WorkoutModel` overrides neither `==`
-   nor `hashCode`, so `state.indexOf(oldWorkout)` is a *reference* comparison. It works today only
-   because the edit flow passes the exact instance out of the list via `extra:`. Any refactor that
-   copies, `copyWith`s or JSON-round-trips the model in between silently turns editing into a
-   no-op — and **no existing test would catch it**. If you add `==`/`hashCode`, note two identical
-   workouts would then collide; prefer adding an `id`, or passing the index.
-2. **The edit form can freeze.** `WorkoutScreen` runs `addPostFrameCallback` on every build, guarded
-   by `selectedIndex == null`. Editing a workout whose `type` is not among the five hardcoded
-   `workoutTypes` leaves `typeIndex == -1`, `selectWorkout` is never called, the guard never closes,
-   and the controllers are overwritten every rebuild — the user cannot type. Reachable the moment
-   the exercise list is edited or reordered while saved data exists.
-3. **Corrupt storage looks like empty storage.** `WorkoutList.build()` catches a JSON decode
-   failure, `debugPrint`s, returns `[]`. The next write then destroys the damaged data for good.
-4. **Tests cover the wrong provider.** The 2 passing tests assert `WorkoutProvider` starts `null`
-   and `selectWorkout(2)` sets `2`. **`WorkoutList` — add / update / delete / clear / persistence /
-   the `catch` — has zero coverage.** No widget or integration tests. That is where test value is.
-5. **`weight`, `reps`, `sets` are all `String`**, with no keyboard restriction and no validation
-   beyond "not empty" — `"10"` and `"10 "` differ. Sorting, totals or charts must fix this first.
-6. **Entries have no date and no id**, so any history / progress / sync request needs a
-   `WorkoutModel` change, which means migrating JSON already on someone's device.
-7. **`applicationId` is still `com.example.workout_tracker`** (`android/app/build.gradle.kts`, both
-   `namespace` and `applicationId`). Blocks any store release, and is painful to change after one.
-8. **The README overstates things — trust the code.** It claims "GetStorage/Hive"; **Hive is not
-   used at all** and never was. "Number of responsive" means repetitions.
-9. **Stray files and deps.** `GetStorage.gs` / `GetStorage.bak` are tracked at the repo root *and*
-   in `mock_path/` (runtime artifacts). `Images.appIcon` points at `images/icons/`, which does not
-   exist; `images/logos/splash_logo.jpg` is unused (code loads the `.jpeg`). `mocktail`,
-   `integration_test`, `flutter_native_splash`, `flutter_launcher_icons` sit under `dependencies:`.
+1. **`applicationId` / `namespace` are still `com.example.workout_tracker`**
+   (`android/app/build.gradle.kts`). They block a store release.
+2. **Widget tests with drift:** use `testAppWidgets`. Seed multi-step data with its `setup:`.
+   Multi-step database work in `runAsync` after the UI is up can deadlock.
+3. **An auto-dispose provider that is only `ref.read` is disposed immediately.** Command
+   controllers must be `@Riverpod(keepAlive: true)`.
+4. **The e1RM formula exists in Dart and in SQL** (`workout_math.dart`, `progress_dao.dart`).
+   Keep them identical.
+5. **The Linux desktop build downloads SQLite from sqlite.org** at CMake time.
+6. **The legacy GetStorage key `workoutList` is intentionally kept** after import. Do not delete
+   it in this release.
+7. `images/receipt/` holds unrelated uploaded images. Leave them unless the owner decides.
+
+v1's traps (identity-based update, edit-form freeze, corrupt storage read as empty, String
+numerics, no ids or dates, untested list logic) were all resolved in v2. See BOARD.md 2026-11-04.
 
 ## Where the depth lives
 
-- `.claude/skills/workout_tracker-manager/SKILL.md` — full conventions, per-file detail, the three
-  `workout_tracker-*` agents (lead / coder / tester). Read it before non-trivial work.
-  **`.claude/` is gitignored** — agent tooling is local-only and is not part of a clone.
-- `BOARD.md` — current state, ranked open items, and the change log. **Log every change here**:
-  what changed, who, when, from where. This project is opened from the portfolio workspace, from
-  VS Code directly, and from a phone; an unlogged change is invisible to the next manager.
-- `graphify-out/` — a knowledge graph of the repo (363 nodes, 466 edges, 34 communities), plus
-  `GRAPH_REPORT.md`. **Query it instead of grepping broadly:**
-  `C:\Python\python.exe -m graphify query "<question>"` from the project root. Caveat: it indexes
-  all 124 files, so the "god nodes" (`Win32Window`, `MessageHandler`, ...) are desktop-runner
-  boilerplate; the Dart app is in communities 2, 4-7, 9-18, 22-25. Edges are structural (imports /
-  defines / references), not semantic. Untracked **and gitignored** — a fresh clone will not
-  have it; rebuild it locally.
+- `docs/RULEBOOK.md`: how to work here (placement, state, presentation, review gate).
+- `docs/ARCHITECTURE.md`: schema, data flow, navigation, migration, backup, recorded tradeoffs.
+- `docs/V2_PROGRESS.md`: hand-off and on-phone checklist.
+- `BOARD.md`: current state, open items, and the change log. **Log every change here.**
+- `.claude/skills/workout_tracker-manager/SKILL.md`: local-only manager skill (gitignored).
+  Update it from the "Facts for the local manager skill" list in BOARD.md 2026-11-04.
+- `graphify-out/`: local-only knowledge graph. It still indexes v1, so rebuild it before use.
 
-Do not commit or push unless asked. Run `analyze` and `test` before calling anything done; both are
-clean today and that baseline is worth protecting.
+Do not commit or push unless asked. Run `analyze` and `test` before calling anything done.
 
 ---
 

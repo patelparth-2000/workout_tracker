@@ -8,85 +8,266 @@ Newest entry at the top. Do not rewrite history; append.
 
 ---
 
-## Status: complete, dormant
+## Status: v2 built on a branch, awaiting the owner's on-phone check and merge
 
-Last code commit **2025-08-13**. Nothing has changed in the app since. Not broken, not
-half-finished — the add / edit / delete / persist loop works end to end. It is a finished small
-learning project that was parked.
+v1 was a three-screen GetStorage scratchpad. **v2 is a full local-first workout tracker**, built on
+branch `claude/sweet-bardeen-e4aswb` (not yet merged; `main` is untouched). See
+`docs/V2_PROGRESS.md` for the hand-off and the on-phone checklist.
 
 | | |
 |---|---|
-| Branch | `main`, clean, **1 commit ahead of `origin/main`** (not pushed — not authorised) |
+| Branch | `claude/sweet-bardeen-e4aswb`, 33 commits ahead of `main` (`main` = `a3b718b`, untouched) |
 | Remote | https://github.com/patelparth-2000/workout_tracker.git |
-| Commits | 4 — 3 app commits on 2025-08-13 (`2fa80d5`, `bb617bb`, `8383f03`) + 1 docs commit dated 2026-08-20 |
-| `flutter analyze` | **No issues found** (0 issues, verified 2026-08-26) |
-| `flutter test` | **2 tests, 2 passing, 0 failing** (verified 2026-08-26) |
-| Size | 21 Dart files under `lib/` |
-| Manager | `.claude/skills/workout_tracker-manager/SKILL.md` |
-
-There is no TODO file, no roadmap and no planning doc in the repo, so there is **no stated next
-step**. Direction has to come from the boss.
+| `flutter analyze` | **No issues found** (verified 2026-11-04, Flutter 3.41.9) |
+| `flutter test` | **170 tests, 170 passing, 0 failing** (verified 2026-11-04) |
+| Size | 69 hand-written Dart files in `lib/` (+18 generated), 16 test files |
+| Stack | Riverpod 3 + codegen, go_router 16, **drift (SQLite)**, fl_chart, share_plus, file_picker |
+| Docs | `docs/ARCHITECTURE.md`, `docs/RULEBOOK.md`, `docs/V2_PROGRESS.md`, README |
 
 ---
 
 ## Open items
 
-Nothing here is urgent — the app works and nobody is using it in anger. Ranked by value if work
-does resume.
+### Needs a decision from the boss
 
-### Would bite someone
+- **MVP line.** Proposed: Phases 1+2 (library, routines, live workout, rest timer, history,
+  settings). Done, along with Phase 3. Standard 1 says the boss decides.
+- **`applicationId` / `namespace` are still `com.example.workout_tracker`**
+  (`android/app/build.gradle.kts`). Blocks any store release. Give a real id.
+- **Merge.** Run the on-phone checklist in `docs/V2_PROGRESS.md`, then merge
+  `claude/sweet-bardeen-e4aswb` into `main`. The plan named `feature/workout-v2`; the cloud
+  environment assigned this branch name instead.
+- **Receipt images** (`images/receipt/image_10..14.jpeg`) are unrelated to the app. Left
+  untouched as instructed.
 
-- **`updateWorkout` matches by object identity.** `WorkoutModel` overrides neither `==` nor
-  `hashCode`, so `state.indexOf(oldWorkout)` is a reference comparison. It works today only
-  because the edit flow passes the exact instance from the list via `extra`. Any refactor that
-  copies or round-trips the model in between turns editing into a silent no-op, and no existing
-  test would catch it.
-- **The edit form can freeze.** `WorkoutScreen`'s `addPostFrameCallback` is guarded by
-  `selectedIndex == null`. Editing a workout whose `type` is not among the five hardcoded
-  `workoutTypes` leaves `typeIndex == -1`, so the guard never closes and the controllers are
-  overwritten on every rebuild — the user cannot type. Becomes reachable the moment the exercise
-  list is edited or reordered while saved data exists.
-- **Corrupt storage looks like empty storage.** `WorkoutList.build()` catches a JSON decode
-  failure, `debugPrint`s, and returns `[]`. The next write then destroys the damaged data.
-- **The logic with the risk is the logic without tests.** The 2 passing tests cover the trivial
-  `WorkoutProvider`. `WorkoutList` — add, update, delete, clear, persistence, the `catch` — has
-  zero coverage.
+### Not done (deliberately)
 
-### Cheap and worth doing
+- **Supersets.** `superset_group` columns are reserved in schema v1, so no migration is needed.
+- **RPE / set types in the UI.** Columns are reserved and backups already carry them.
+- **Health integrations, reminders, body measurements.** Excluded by the plan.
+- **Persisting custom plate sets** in the plate calculator. It uses standard kg/lb sets.
+- **Deleting the legacy GetStorage key.** Kept this release for rollback safety; remove in a
+  later release.
+- **Standard 10 (CI, signing, monitoring).** Opt-in and not requested.
 
-- Move `mocktail` and `integration_test` from `dependencies:` to `dev_dependencies:`; they
-  currently ship in the app bundle. Drop `flutter_native_splash` (declared, no config block,
-  never referenced) or configure it.
-- Gitignore and untrack `GetStorage.gs` / `GetStorage.bak` at the repo root and in `mock_path/` —
-  runtime storage artifacts should not be in version control.
-- Fix the README: it claims "GetStorage/Hive", but **Hive is not used at all**. It also says
-  "Number of responsive" where it means repetitions.
-- Delete the dead `Images.appIcon` constant (points at `images/icons/`, which does not exist) and
-  the unused `images/logos/splash_logo.jpg` (the code loads the `.jpeg`).
-- Make the `IconData` fields in `utils/images.dart` `static` so widget code stops writing
-  `Images().addIcon`.
+### Known limits (said, not hidden)
 
-### Needs a decision, not a fix
-
-- **`applicationId` is still `com.example.workout_tracker`.** The default placeholder. Blocks any
-  store release, and is painful to change after one.
-- **Entries carry no date and no id.** Any request for history, progress, charts or sync needs a
-  `WorkoutModel` change first — which means migrating whatever JSON already sits on a device.
-- **Riverpod is a major version behind** (2.6.1 vs 3.x), as is `riverpod_annotation` (2.6.1 vs
-  4.x). Not urgent for a dormant app; scope an upgrade as a project, since it touches every
-  provider plus regenerated codegen.
+- Backup export/import holds the whole database in memory, with a 20 MB import cap. At 1000×
+  today's data it gets slower but still works.
+- The plate calculator is greedy: optimal for standard plate sets, not guaranteed for unusual
+  custom sets.
+- Linux desktop builds need network access to sqlite.org at CMake time (Android/iOS unaffected).
 
 ### Environment
 
-- **The Flutter SDK is not on PATH.** It lives at `C:\Flutter_sdk_src\flutter\bin\flutter.bat`.
-  `.dart_tool/` still references the older `C:\Flutter SDK src\...` location, so run `pub get`
-  before anything else in a fresh session or you get misleading "package not found" errors.
-- `pub get` under the current Flutter (3.41.9) rewrites `pubspec.lock` with ~19 transitive bumps.
-  That change is expected and is **not** currently committed — the lock in git is the older one.
+- On the owner's Windows machine the SDK is at `C:\Flutter_sdk_src\flutter\bin\flutter.bat`.
+  Run `pub get` first in a fresh session.
+- `pubspec.lock` is now committed **with** the deliberate v2 dependency changes.
 
 ---
 
 ## Log
+
+### 2026-11-04 · cloud session 2026-11-04 (sessions 1–3, run as one)
+
+**Who / where:** cloud Claude Code session, on branch `claude/sweet-bardeen-e4aswb` (the
+branch the cloud environment assigned; the plan named `feature/workout-v2`). `main` was not
+touched. Brief: `CLOUD_PLAN_2026-11-04.md` (all three phases).
+
+**Baseline, measured cold:** `flutter analyze` → No issues found. `flutter test` → 2/2.
+**End:** `flutter analyze` → **No issues found**. `flutter test` → **170/170**. Every commit
+was gated on both.
+
+**What changed** (33 commits, one concern each):
+- Phase 1: architecture doc first; 13 characterisation tests for the v1 `WorkoutList`; cleanup
+  (dev_dependencies, untracked GetStorage files, dead assets, README); Riverpod 2.6 → 3.3; drift
+  schema v1 (7 tables, 4 indexes, FKs on); 65-exercise seed; atomic, idempotent v1 import;
+  light and dark themes from tokens; startup screen; 5-tab shell. The v1 screens were retired.
+- Phase 2: exercise library, routines, live workout with set logging and previous values, rest
+  timer (end timestamp + injected clock), paged history with editing, settings.
+- Phase 3: progress tab (bests, e1RM and volume charts, PR badges), JSON backup and restore
+  with full validation, CSV export, an accessibility and 2× text pass enforced by tests,
+  plate calculator, README, `docs/RULEBOOK.md`, `docs/V2_PROGRESS.md`.
+
+**Bugs found by tests while building, fixed in the code:**
+- An auto-dispose command controller read with `ref.read` was disposed before its method
+  ran (`UnmountedRefException`). All command controllers are now `keepAlive`.
+- The routine editor set its dirty flag without `setState`, so the unsaved-changes guard
+  never armed.
+- The rest countdown read 1:29 the moment it started; it now rounds up.
+- The backup restore spinner kept running behind the confirm dialog.
+- At 2× text: the section header squeezed its title to one letter per line, the routine card,
+  the rest dropdown and the exercise-form dropdowns overflowed, and the exercise filter bar
+  left no room for the list. The live-workout title was a sub-48 dp tap target.
+
+**Found on the real Linux build (not by tests), fixed:** prefilled "0" values weren't selected
+on focus (typing appended); completed sets were greyed out as "disabled"; the progress chart
+collapsed same-day workouts into a vertical line and had cluttered axis edge labels.
+
+**Real-build verification:** a Linux debug build, driven at phone size under Xvfb. Covered
+seed + GIFs, a full workout, rest timer, previous values, live PR badge, **survival after
+SIGKILL**, dark mode, and **a real v1 `GetStorage.gs` import** ("100 " trimmed, "abc" kept as a
+note, key kept, no second import on relaunch). The build needed a local CMake patch in the pub
+cache (sqlite.org is unreachable here). It was restored afterwards and not committed.
+
+**Test-file edits, all deliberate:**
+- `test/unit/workout_provider_test.dart` (2 v1 tests) and
+  `test/unit/workout_list_provider_test.dart` (13 characterisation tests) were **deleted
+  together with the v1 code they tested** (commit `fd5c5a3`). They pinned behaviour of code
+  that no longer exists. v1 data compatibility is now covered by the importer tests, including
+  against real GetStorage.
+- `test/data/legacy_importer_test.dart`: `tearDownAll` stopped deleting the GetStorage temp
+  dir. An async GetStorage flush raced the delete and made the test flaky. No assertion was
+  changed (commit `42ba9e7`).
+- In tests not yet committed at the time, five of my own new assertions turned out to be wrong
+  and were corrected before committing: the routine-test "Previous" count, the CSV line count
+  (it includes the in-progress workout), a regex anchor, two `kg` finders, and the PR semantics
+  finder. Each was checked against the code's documented behaviour, not loosened to pass.
+
+**Sabotage checks.** Every new test was broken on purpose, the edit was confirmed to have
+landed (file compare), the test was seen to fail, and the change was reverted. Survivors were
+reported, and a new test was added for each, except two that are equivalent mutants.
+
+| Guarded file | Sabotage | Test(s) that failed |
+|---|---|---|
+| workout_list_provider.dart | `index != -1` -> `== -1` in updateWorkout | both updateWorkout characterisation tests |
+| workout_list_provider.dart | catch block rethrows | corrupt JSON / write-after-corrupt / non-list JSON |
+| workout_list_provider.dart | _saveToStorage skips storage.write | add, persist, delete, clear, write-after-corrupt |
+| workout_list_provider.dart | deleteWorkout removes last instead of index | deleteWorkout removes by index |
+| workout_list_provider.dart | clearWorkouts does not save | clearWorkouts stores "[]" |
+| workout_list_provider.dart | non-list JSON decoded as a fake entry | valid JSON that is not a list |
+| workout_model.dart | fromJson trims weight | round-trips every field as a String |
+| app_database.dart | PRAGMA foreign_keys = OFF | FK enforced, exercise delete blocked, session cascade, routine cascade |
+| workout_dao.dart | previous-values SQL drops `ended_at IS NOT NULL` | **survived at first** -> added "an unfinished session never counts as previous", which then failed |
+| workout_dao.dart | keyset `ws.id < ?` -> `<=` | history paging 5 and 6 sessions |
+| workout_dao.dart | volume counts incomplete sets | active excluded; volume completed only |
+| workout_dao.dart | no one-active-session guard | only one active session at a time |
+| exercise_dao.dart | LIKE escaping removed | LIKE wildcards are literal |
+| exercise_dao.dart | duplicate-name check removed | custom create rejects duplicates |
+| workout_dao.dart | exercise positions not rewritten | add/move/remove keeps positions dense |
+| workout_dao.dart | prefill ignores previous sets | starting from a routine copies ... previous values |
+| workout_dao.dart | updateSet skips validation | sets: ... update validates |
+| exercise_seed.dart | duplicate-name check disabled | parseExerciseSeed rejects malformed input |
+| assets/data/exercises.json | Squat gif_asset key removed | five v1 exercises keep names, GIFs, descriptions |
+| exercise_seed.dart | type check inverted | parseExerciseSeed rejects malformed input |
+| app_database.dart | loader also invoked in beforeOpen on reopen | seeds on creation only |
+| legacy_importer.dart | already-imported flag ignored | second launch does not import twice |
+| legacy_importer.dart | "done" flag write removed | clean data; second launch; no key / empty list |
+| legacy_importer.dart | non-list JSON returned as empty | corrupt data (not a list) |
+| legacy_importer.dart | unparseable reps not kept as a note | messy strings ... never dropped |
+| legacy_importer.dart | sets cap (50) removed | messy strings ... (9999 sets) |
+| legacy_importer.dart | writes outside the transaction | a failure mid-import rolls everything back |
+| legacy_importer.dart | `.trim()` before num.tryParse removed | **survived — equivalent mutant**: Dart's num.tryParse ignores surrounding whitespace itself |
+| legacy_importer.dart | exercise cache keyed case-sensitively | **survived — equivalent mutant**: the fallback findByName is case-insensitive, so only an extra query results |
+| app.dart | themeMode hardcoded to light | shell test (dark) |
+| app_shell.dart | Settings destination relabelled | shell tests (light, dark) |
+| startup_screen.dart | "Continue without importing" hidden | corrupt v1 data: error with retry, continue |
+| startup_screen.dart | startup never routes to the shell | both shell tests + valid v1 import |
+| app_startup_provider.dart | importer bypassed | corrupt v1 data; valid v1 data imported |
+| units.dart | lbPerKg = 2.2 | lb conversion uses 2.2046226218 (+ others) |
+| units.dart | formatNumber truncates | formatting rounds to one decimal |
+| units.dart | comma decimal not accepted | input parsing |
+| workout_math.dart | reps 1 goes through Epley | Epley e1RM |
+| workout_math.dart | reps 0 allowed | Epley e1RM |
+| units.dart | no thousands separators | volume has thousands separators |
+| settings_screen.dart | unit segment callback emptied | settings change unit, rest and theme |
+| settings_screen.dart | rest dropdown ignores choice | settings change unit, rest and theme |
+| settings_provider.dart | controller auto-dispose (original code) | settings test failed with UnmountedRefException before the keepAlive fix |
+| exercise_filter_bar.dart | search onChanged not wired | library lists, searches, filters |
+| exercise_edit_screen.dart | duplicate-name error swallowed | create a custom exercise; duplicates rejected |
+| exercise_detail_screen.dart | archive toggle inverted | detail shows info; archive hides it |
+| exercise_edit_screen.dart | edit form not prefilled | custom exercise can be edited |
+| exercise_edit_screen.dart | name validator removed | create a custom exercise ... |
+| rest_timer_provider.dart | remaining = total (ignores clock) | start sets end timestamp; background gap |
+| rest_timer_provider.dart | adjust ignores delta | +15 / -15 adjust |
+| rest_timer_provider.dart | total not grown on +15 | +15 / -15 adjust |
+| rest_timer_provider.dart | adjust below zero keeps running | +15 / -15 adjust |
+| rest_timer_provider.dart | adjusting an expired timer revives it | adjusting an expired timer does nothing |
+| rest_timer_provider.dart | adjust below zero keeps running | **survived at first** (isRunning false anyway) -> added 'removing more time than is left resets to idle', which failed |
+| set_row.dart | invalid values can be ticked done | log sets: ... validate, complete |
+| set_row.dart | lb input stored without conversion | lb display: typed pounds stored as kg |
+| active_workout_providers.dart | rest timer not started on completion | log sets ... rest timer |
+| rest_timer_bar.dart | countdown floors (1:29 at start) | log sets ... rest timer (this was a real bug first, found by the test) |
+| active_workout_screen.dart | finish skips the no-completed-sets confirm | finish moves the workout to History |
+| workout_home_screen.dart | Start allowed while a workout is active | in-progress workout shows Resume and blocks |
+| routine_edit_screen.dart | dirty flag set without setState (original bug) | routine editor warns before discarding |
+| routine_edit_screen.dart | target sets dropped on save | routines: create with the picker, start it |
+| history_providers.dart | first page reports hasMore = false | loaded list pages past the first 30 (a first attempt, `return` in loadMore, did not compile and was discarded as a sabotage) |
+| history_providers.dart | no refresh on data change | edit a set in history, then delete |
+| edit_set_dialog.dart | weight validation removed | edit a set in history ... |
+| session_detail_screen.dart | edit not saved | edit a set in history ... |
+| session_detail_screen.dart | delete not wired | edit a set in history ... |
+| progress_dao.dart | Epley divisor 30 -> 40 | bests ignores incomplete...; series |
+| progress_dao.dart | reps = 1 special case removed | best weight, e1RM, volume computed in SQL |
+| progress_dao.dart | ties count as records | a tie is not a record |
+| progress_dao.dart | every qualifying set marked, not just the best | beating the prior best marks only the best set |
+| progress_dao.dart | later sessions included in "prior" | **survived at first** -> added "a record stays a record after it is beaten later", which then failed |
+| progress_dao.dart | unfinished sessions counted in bests | bests ignores ... unfinished sessions |
+| progress_dao.dart | zero-rep sets qualify | bests ignores ...; reps 0 never counts |
+| progress_dao.dart | range filter ignored | series ... range filter |
+| active_workout_screen.dart | record ids not passed to the live card | completing a set that beats your best shows the PR badge |
+| session_detail_screen.dart | history PR badge hidden | a record set shows a PR badge in history |
+| progress_chart.dart | chart plots kg regardless of unit | **survived at first** -> added "the chart plots in the display unit", which then failed |
+| progress_screen.dart | metric toggle ignored | loaded: records, chart, unit switch, metric toggle |
+| exercise_bests_grid.dart | bests always in kg | loaded: ... unit switch |
+| backup_codec.dart | newer version accepted | rejects ... newer version |
+| backup_codec.dart | set FK check skipped | rejects ... dangling foreign key |
+| backup_codec.dart | weight range unchecked | rejects ... weight above bound |
+| backup_codec.dart | replace not in a transaction | **survived at first** (the old rollback test failed on the first delete) -> added "an insert failing AFTER the deletes still rolls back", which then failed. A first sed attempt did not compile and was discarded |
+| backup_codec.dart | CSV formula not neutralised | fields are quoted and formulas neutralised |
+| backup_codec.dart | size cap removed | oversized file is rejected |
+| backup_codec.dart | GIF path not sanitised | non-bundled GIF paths are dropped |
+| backup_codec.dart | duplicate exercise names allowed | rejects ... duplicate exercise name |
+| backup_codec.dart | settings row not restored | export -> import -> export is identical |
+| backup_section.dart | confirmation answer ignored | **survived at first** (no test pressed Cancel; it was committed in 3390311 before this was caught) -> added "cancelling the confirmation keeps the current data", which then failed |
+| backup_section.dart | rejection message replaced by "Error" | an invalid file is rejected with a message |
+| backup_section.dart | CSV tile exports JSON | export CSV shares the sets |
+| rest_timer_bar.dart | "+15 s" icon button without tooltip | Active workout meets ... label guidelines (light, dark) |
+| set_row.dart | done button shrunk to 30 dp | Active workout meets tap-target guideline (light, dark) |
+| session_detail_screen.dart | pale grey text | Session detail meets contrast guideline (light) — dark correctly passes |
+| routine_edit_screen.dart | rest dropdown not expanded | Routine editor does not overflow at 2x text |
+| exercise_edit_screen.dart | muscle dropdown not expanded | New exercise form does not overflow at 2x text |
+| plate_math.dart | plates sorted ascending | exact kg load; fractional; lb 225/315; only selected plates |
+| plate_math.dart | hundredths replaced by truncation | 5 plate tests |
+| plate_calculator_screen.dart | plate chip toggle ignored | plate calculator loads each side |
+| plate_calculator_screen.dart | unit ignored (always kg) | plate calculator uses lb plates |
+| progress_chart.dart | chart drawn for a single point | one workout shows a hint instead of a one-point chart |
+| progress_chart.dart | x axis by time again | two workouts on the same day are two separate points |
+| set_row.dart | no select-all on focus | set inputs select their text on focus |
+| set_row.dart | completed rows disabled (greyed) again | ... done rows are read-only |
+
+**Deliberately not done:** supersets, RPE/set-type UI, health/reminders/body measurements,
+persisted plate sets, deleting the legacy key, standard 10. No `applicationId` change and no
+change to `images/receipt/` (as instructed). **Not pushed:** the push was blocked by the
+session's permission policy, so the branch is committed locally in the cloud container and
+waits for the owner's approval to push.
+
+#### Facts for the local manager skill
+
+- **Stack:** flutter_riverpod 3.3.1 / riverpod_annotation 4.0.2 / riverpod_generator 4.0.3;
+  drift 2.31 + drift_flutter 0.2.8 + drift_dev; fl_chart 1.3; share_plus 13.3; file_picker
+  13.3; path_provider 2.1; intl 0.20. `get_storage` stays, but only for the one-shot v1 read.
+  `mocktail`, `integration_test` and `flutter_launcher_icons` are dev deps;
+  `flutter_native_splash` was removed.
+- **Persistence:** SQLite via drift, file `workout_tracker.sqlite` in the app documents dir.
+  Schema v1 (see ARCHITECTURE §3). GetStorage key `workoutList` is read once and never written.
+- **Layout:** `lib/data/` (tables, DAOs, models, seed, legacy, backup) is new.
+  `lib/src/{startup,shell,workout,active_workout,history,exercises,progress,settings}`. v1
+  folders `splash_screen`, `workout_list_screen`, `workout_screen` and `common_function.dart`
+  were removed. Tokens live in `lib/utils/{color_constant,app_spacing,app_theme}.dart`.
+- **Conventions (new):** command controllers are `keepAlive`; route args are ids in path
+  params (no `extra:`); `clockProvider` for time; `testAppWidgets` + `setup:` for widget tests;
+  `build.yaml` sets drift `not_shared` (`*.drift.dart`) before riverpod_generator; build
+  command is `dart run build_runner build` (the `--delete-conflicting-outputs` flag is now
+  ignored).
+- **Traps resolved:** identity-based `updateWorkout` (ids everywhere); edit-form freeze
+  (forms load once in `initState`); corrupt storage treated as empty (error screen, data
+  kept); String numerics (REAL kg / INT reps); no date/id (sessions dated, ids everywhere);
+  `WorkoutList` had zero tests.
+- **Traps that remain:** `applicationId` placeholder; Linux build needs sqlite.org.
+- **New traps:** drift streams + `runAsync` multi-step work can deadlock in widget tests (use
+  `setup:`); an auto-dispose provider that is only `ref.read` dies immediately.
+- **Test count:** 170 (was 2).
 
 ### 2026-08-22 — project-analyst (portfolio workspace, `E:\Flutter Projects\My Projeccts`)
 
