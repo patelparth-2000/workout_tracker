@@ -4,7 +4,7 @@
 
 A Flutter application to track workouts, including sets, reps, and weight.  
 Built with **Riverpod** for state management, **GoRouter** for navigation,  
-and local storage integration (GetStorage/Hive ready) for persistent data.
+and GetStorage for on-device persistence.
 
 ---
 
@@ -14,9 +14,9 @@ and local storage integration (GetStorage/Hive ready) for persistent data.
 - Store workout details such as:
   - **Type** (e.g., Bench Press, Squats)
   - **Weight** used
-  - **Number of responsive**
+  - **Number of repetitions**
   - **Number of sets**
-- Local data storage with GetStorage/Hive.
+- Local data storage with GetStorage (Hive is not used).
 - Clean and responsive UI.
 - Easy navigation using GoRouter.
 
