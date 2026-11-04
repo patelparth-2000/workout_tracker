@@ -66,12 +66,17 @@ time). `PRAGMA foreign_keys = ON` in `beforeOpen`.
 | routines | id, name, notes NULL, position, created_at |
 | routine_exercises | id, routine_id FK→routines CASCADE, exercise_id FK→exercises, position, target_sets, target_reps NULL, rest_seconds NULL, superset_group NULL |
 | workout_sessions | id, routine_id NULL FK→routines SET NULL, name, started_at, ended_at NULL, notes NULL |
-| session_exercises | id, session_id FK→workout_sessions CASCADE, exercise_id FK→exercises, position, superset_group NULL, notes NULL |
+| session_exercises | id, session_id FK→workout_sessions CASCADE, exercise_id FK→exercises, position, superset_group NULL, notes NULL, **rest_seconds NULL** |
 | set_entries | id, session_exercise_id FK→session_exercises CASCADE, position, weight_kg REAL, reps INT, set_type TEXT default 'normal', rpe REAL NULL, completed_at NULL |
 | app_settings | id = 1 (single row), unit 'kg'\|'lb', default_rest_seconds, theme_mode 'system'\|'light'\|'dark', legacy_imported_at NULL |
 
 Indexes: `workout_sessions(started_at)`, `session_exercises(session_id)`,
 `session_exercises(exercise_id)`, `set_entries(session_exercise_id)`.
+
+**Deviation from the v2 brief (recorded):** `session_exercises.rest_seconds` was added. When a
+session starts from a routine, each exercise's rest is copied in, so the rest timer reads it
+directly instead of re-matching routine rows (which break when the routine is edited or
+deleted mid-workout). NULL means "use the settings default".
 
 `exercises` are never hard-deleted: they are referenced by history. Built-ins and customs both
 **archive** (hidden from pickers, still resolvable in history). `exercise_id` FKs therefore have
@@ -96,6 +101,9 @@ cost grows linearly with history — standard 4).
   badge (avoids every imported entry lighting up as a "record").
 - All aggregation (bests, per-session series, totals) is done **in SQL**, never by loading all
   rows into Dart and folding.
+- **Previous values**: for each exercise, the sets of the most recent *finished* session that
+  contains it. The "Previous" column shows the set at the same position; new sets are
+  prefilled from it (extra sets repeat the last previous set).
 
 ## 4. Data flow
 
@@ -116,20 +124,24 @@ Widget (ConsumerWidget) --ref.watch--> @riverpod provider --watch()/get()--> DAO
 go_router, navigation **by name only** (`RouteNames` + `pushNamed`/`goNamed`).
 
 ```
-/startup                         StartupScreen (loading → error+retry → goNamed(workout))
-StatefulShellRoute (bottom nav)
-  /workout                       WorkoutHomeScreen
-     routine/new, routine/:id    RoutineEditScreen
-  /history                       HistoryScreen
-     :id                         SessionDetailScreen
-  /exercises                     ExerciseListScreen
-     :id                         ExerciseDetailScreen
-     new, :id/edit               ExerciseEditScreen
-  /progress                      ProgressScreen
-  /settings                      SettingsScreen
-     plates                      PlateCalculatorScreen
-/active                          ActiveWorkoutScreen (full screen, above the shell)
+/startup                              StartupScreen (loading → error+retry → goNamed(workout))
+/active                               ActiveWorkoutScreen (root navigator, above the shell)
+/pick-exercise                        ExercisePickerScreen (pops with the chosen id)
+StatefulShellRoute.indexedStack (bottom nav, one branch per tab)
+  /workout                            WorkoutHomeScreen
+     /workout/routine/new             RoutineEditScreen          (root navigator)
+     /workout/routine/:routineId      RoutineEditScreen          (root navigator)
+  /history                            HistoryScreen
+     /history/:sessionId              SessionDetailScreen
+  /exercises                          ExercisesScreen
+     /exercises/new                   ExerciseEditScreen         (root navigator)
+     /exercises/:exerciseId           ExerciseDetailScreen
+     /exercises/:exerciseId/edit      ExerciseEditScreen         (root navigator)
+  /progress                           ProgressScreen
+  /settings                           SettingsScreen
+     /settings/plates                 PlateCalculatorScreen
 ```
+Malformed ids in a path become -1 and render the screen's "not found" state.
 
 Route arguments are ids in the path (`pathParameters`), never objects in `extra:`. That removes the
 v1 identity-equality trap by construction.
@@ -143,8 +155,10 @@ On startup, after the DB opens and **only if `app_settings.legacy_imported_at` i
 key exists:
 
 1. Decode. Failure (not JSON, not a list, wrong element shape) → **nothing is written, the key is
-   not touched**, the startup screen shows the error with Retry. Data is never silently treated as
-   empty (fixes v1 trap 3).
+   not touched**, the startup screen shows the error with **Retry** and **Continue without
+   importing** (otherwise a permanently corrupt blob would lock the user out of the app; the
+   flag stays unset, so the import is retried on the next launch). Data is never silently
+   treated as empty (fixes v1 trap 3).
 2. One transaction: create a workout session "Imported workouts" dated now (v1 had no dates);
    for each entry map `type` to an exercise by name (case-insensitive) or create a custom exercise;
    `trim()` + `num.tryParse` weight / reps / sets; `sets = N` → N set entries (completed);
@@ -187,7 +201,15 @@ ticked complete: routine's per-exercise rest, else settings default. ±15 s, ski
   and existing data is intact. The user confirms that import **replaces** all data.
 - CSV export of all sets (date, workout, exercise, set, weight kg, reps, type, rpe, completed).
 - Size bound: the file is read fully into memory; a hard cap (20 MB) rejects anything larger
-  before decoding, so a hostile file cannot OOM the app.
+  before decoding (the picker checks the length before reading), so a hostile file cannot OOM
+  the app. Export also holds the whole database in memory; at 1000× today's data (~100k sets,
+  ~15 MB of JSON) it gets slower but still works. Left as is, and said so.
+- `gif_asset` values from a backup are kept only if they point into `images/gifs/` (bundled
+  assets); anything else is dropped.
+- CSV fields are quoted, and text starting with `=`, `+`, `-` or `@` is prefixed with `'` so a
+  crafted exercise name cannot run as a spreadsheet formula (CSV injection).
+- Permissions: share_plus and file_picker add **no** Android permissions (file_picker only
+  declares intent `<queries>`; the system picker grants per-file access).
 
 ## 10. Performance bounds (standard 4)
 
@@ -195,7 +217,11 @@ ticked complete: routine's per-exercise rest, else settings default. ±15 s, ski
   builder list. Totals per page are one grouped query, not a query per row.
 - Exercise search/filter runs in SQL (`LIKE` + `WHERE`), the list is a builder list (library is
   bounded at hundreds, not unbounded).
-- Charts query one exercise over a chosen date range with per-session grouping in SQL.
+- Charts query one exercise over a chosen date range with per-session grouping in SQL. Points are
+  spaced one per workout (not by calendar time) so same-day sessions do not collapse; a chart
+  needs at least 2 points.
+- History reloads its loaded range when sessions or sets change, **debounced 300 ms**, so
+  typing in a live workout does not re-run the history query on every keystroke.
 - Seeding is one batch insert. Legacy import is one transaction with batched inserts.
 - What breaks at 1000x data: nothing stops working; chart queries over years of data get slower
   per exercise (indexed join, still bounded by the range filter). Left as is and said so.
@@ -213,10 +239,21 @@ ticked complete: routine's per-exercise rest, else settings default. ±15 s, ski
   completion/PR shown with icon + text, not colour alone; layouts scroll so 2× text does not
   overflow.
 
-## 12. Decisions not taken (and why)
+## 12. Code generation
+
+`build.yaml` switches drift to its **not_shared** builder (`*.drift.dart` part files) and orders
+it before riverpod_generator. With drift's default shared builder, drift classes only appear in
+the combined `*.g.dart` after riverpod_generator has run, and any provider whose signature
+mentions one (e.g. `Stream<AppSettingsData>`) fails with `InvalidTypeException`.
+
+## 13. Decisions not taken (and why)
 
 - **No repository interfaces** (see §2).
 - **No notifications for the rest timer** — needs a permission and background work; not requested.
 - **No health integrations, reminders, body measurements** — excluded by the plan.
 - **applicationId stays `com.example.workout_tracker`** — the owner has not given a real id.
 - **Legacy GetStorage key not deleted** this release — rollback safety.
+- **Supersets** not built; `superset_group` columns are reserved, so adding them needs no
+  migration.
+- **Plate selections not persisted** — the calculator uses standard kg/lb plate sets that the
+  user can toggle per use; storing per-gym sets was not worth a settings migration yet.
