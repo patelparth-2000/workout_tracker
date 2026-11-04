@@ -70,4 +70,14 @@ void main() {
       expect(state().endsAt, isNull);
     },
   );
+
+  test(
+    'removing more time than is left resets to idle (no stale end time)',
+    () {
+      timer().start(const Duration(seconds: 10));
+      timer().adjust(-restAdjustStep);
+      expect(state().endsAt, isNull);
+      expect(state().total, Duration.zero);
+    },
+  );
 }
