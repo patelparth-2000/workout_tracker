@@ -191,7 +191,8 @@ void main() {
           );
       await GetStorage('GetStorage', tmp.path).initStorage;
     });
-    tearDownAll(() => tmp.delete(recursive: true));
+    // The OS temp dir is not deleted here: GetStorage flushes asynchronously after
+    // erase(), and deleting the folder under a pending flush made this test flaky.
     setUp(() => GetStorage().erase());
 
     LegacyImporter real() =>
