@@ -52,7 +52,7 @@ class ListWidget extends StatelessWidget {
                     workoutTypes[index]['icon']!,
                     workoutTypes[index]['description'],
                   ),
-                  icon: Icon(Images().viewIcon, color: IconColor.green),
+                  icon: Icon(Images.viewIcon, color: IconColor.green),
                 ),
               ],
             ),

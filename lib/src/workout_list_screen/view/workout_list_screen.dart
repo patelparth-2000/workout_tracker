@@ -64,7 +64,7 @@ class WorkoutListScreen extends ConsumerWidget {
         onPressed: () {
           context.pushNamed(RouteNames.workoutScreen);
         },
-        child: Icon(Images().addIcon, size: 30),
+        child: Icon(Images.addIcon, size: 30),
       ),
     );
   }

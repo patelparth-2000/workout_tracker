@@ -12,8 +12,8 @@ class Images {
   static const String shoulderPrees = 'images/gifs/workout_shoulder_press.gif';
 
   // icon
-  IconData editIcon = Icons.edit;
-  IconData deleteIcon = Icons.delete;
-  IconData addIcon = Icons.add;
-  IconData viewIcon = Icons.remove_red_eye;
+  static const IconData editIcon = Icons.edit;
+  static const IconData deleteIcon = Icons.delete;
+  static const IconData addIcon = Icons.add;
+  static const IconData viewIcon = Icons.remove_red_eye;
 }

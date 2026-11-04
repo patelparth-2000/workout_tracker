@@ -30,14 +30,14 @@ class ListWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ButtonWidget(
-                icon: Images().editIcon,
+                icon: Images.editIcon,
                 color: IconColor.blue,
                 onPressed: () {
                   context.pushNamed(RouteNames.workoutScreen, extra: workout);
                 },
               ),
               ButtonWidget(
-                icon: Images().viewIcon,
+                icon: Images.viewIcon,
                 color: IconColor.green,
                 onPressed: () => showViewExerciseBottomSheet(
                   context,
@@ -47,7 +47,7 @@ class ListWidget extends StatelessWidget {
                 ),
               ),
               ButtonWidget(
-                icon: Images().deleteIcon,
+                icon: Images.deleteIcon,
                 color: IconColor.red,
                 onPressed: () {
                   onDeleteButtonPressed(index);
