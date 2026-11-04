@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../src/active_workout/view/active_workout_screen.dart';
 import '../src/exercises/view/exercise_detail_screen.dart';
 import '../src/exercises/view/exercise_edit_screen.dart';
 import '../src/exercises/view/exercise_picker_screen.dart';
@@ -11,6 +12,7 @@ import '../src/progress/view/progress_screen.dart';
 import '../src/settings/view/settings_screen.dart';
 import '../src/shell/view/app_shell.dart';
 import '../src/startup/view/startup_screen.dart';
+import '../src/workout/view/routine_edit_screen.dart';
 import '../src/workout/view/workout_home_screen.dart';
 
 // Do NOT use these for navigation.
@@ -22,6 +24,7 @@ class _AppPaths {
   static const String progress = '/progress';
   static const String settings = '/settings';
   static const String exercisePicker = '/pick-exercise';
+  static const String activeWorkout = '/active';
 }
 
 /// Use these for named navigation. Arguments travel as path parameters (ids), never as
@@ -33,6 +36,9 @@ class RouteNames {
   static const String exercises = 'exercises';
   static const String progress = 'progress';
   static const String settings = 'settings';
+  static const String activeWorkout = 'activeWorkout';
+  static const String routineNew = 'routineNew';
+  static const String routineEdit = 'routineEdit';
   static const String exerciseNew = 'exerciseNew';
   static const String exerciseDetail = 'exerciseDetail';
   static const String exerciseEdit = 'exerciseEdit';
@@ -63,6 +69,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.exercisePicker,
         builder: (context, state) => const ExercisePickerScreen(),
       ),
+      GoRoute(
+        path: _AppPaths.activeWorkout,
+        name: RouteNames.activeWorkout,
+        builder: (context, state) => const ActiveWorkoutScreen(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
         branches: [
@@ -72,6 +83,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: _AppPaths.workout,
                 name: RouteNames.workout,
                 builder: (context, state) => const WorkoutHomeScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'routine/new',
+                    name: RouteNames.routineNew,
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (context, state) => const RoutineEditScreen(),
+                  ),
+                  GoRoute(
+                    path: 'routine/:routineId',
+                    name: RouteNames.routineEdit,
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (context, state) =>
+                        RoutineEditScreen(routineId: _id(state, 'routineId')),
+                  ),
+                ],
               ),
             ],
           ),

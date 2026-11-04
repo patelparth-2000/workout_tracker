@@ -26,6 +26,7 @@ void testAppWidgets(
   List<ExercisesCompanion>? seed,
   Size? surfaceSize,
   double textScale = 1,
+  Future<void> Function(AppDatabase db)? setup,
 }) {
   testWidgets(description, (tester) async {
     if (surfaceSize != null) {
@@ -34,6 +35,7 @@ void testAppWidgets(
     tester.platformDispatcher.textScaleFactorTestValue = textScale;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     final db = testDatabase(seed: seed);
+    if (setup != null) await tester.runAsync(() => setup(db));
     await tester.pumpWidget(
       ProviderScope(
         retry: (retryCount, error) => null,
@@ -69,7 +71,11 @@ Future<void> settle(WidgetTester tester) async {
   }
 }
 
-/// Runs a database call on real time, then settles the UI.
+/// Runs ONE database call on real time, then settles the UI.
+///
+/// Multi-step work here can deadlock: the UI's drift stream queries run in the fake-async
+/// zone and hold the database lock until that zone is pumped. Seed multi-step data with
+/// `testAppWidgets(setup: ...)`, which runs before the UI subscribes.
 Future<T> dbCall<T>(WidgetTester tester, Future<T> Function() call) async {
   final result = await tester.runAsync(call);
   await settle(tester);
