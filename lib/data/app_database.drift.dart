@@ -3181,6 +3181,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final RoutineDao routineDao = RoutineDao(this as AppDatabase);
   late final WorkoutDao workoutDao = WorkoutDao(this as AppDatabase);
   late final SettingsDao settingsDao = SettingsDao(this as AppDatabase);
+  late final ProgressDao progressDao = ProgressDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();

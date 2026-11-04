@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import 'daos/exercise_dao.dart';
+import 'daos/progress_dao.dart';
 import 'daos/routine_dao.dart';
 import 'daos/settings_dao.dart';
 import 'daos/workout_dao.dart';
@@ -23,7 +24,7 @@ typedef ExerciseSeedLoader = Future<List<ExercisesCompanion>> Function();
     SetEntries,
     AppSettings,
   ],
-  daos: [ExerciseDao, RoutineDao, WorkoutDao, SettingsDao],
+  daos: [ExerciseDao, RoutineDao, WorkoutDao, SettingsDao, ProgressDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor, {ExerciseSeedLoader? seedLoader})
