@@ -53,3 +53,7 @@ graphify-out/
 .claude/
 BOARD.md
 CLAUDE.md
+# GetStorage runtime files (written by the app / tests, never source)
+GetStorage.gs
+GetStorage.bak
+mock_path/
