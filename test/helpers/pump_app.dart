@@ -75,3 +75,11 @@ Future<T> dbCall<T>(WidgetTester tester, Future<T> Function() call) async {
   await settle(tester);
   return result as T;
 }
+
+/// Opens a bottom-navigation tab by its label.
+Future<void> openTab(WidgetTester tester, String label) async {
+  await tester.tap(
+    find.descendant(of: find.byType(NavigationBar), matching: find.text(label)),
+  );
+  await settle(tester);
+}
